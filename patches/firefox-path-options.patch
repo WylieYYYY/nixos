@@ -1,0 +1,117 @@
+diff --git a/modules/programs/firefox.nix b/modules/programs/firefox.nix
+index 314fc399..e7e6cda2 100644
+--- a/modules/programs/firefox.nix
++++ b/modules/programs/firefox.nix
+@@ -8,19 +8,8 @@ let
+ 
+   cfg = config.programs.firefox;
+ 
+   jsonFormat = pkgs.formats.json { };
+ 
+-  mozillaConfigPath =
+-    if isDarwin then "Library/Application Support/Mozilla" else ".mozilla";
+-
+-  firefoxConfigPath = if isDarwin then
+-    "Library/Application Support/Firefox"
+-  else
+-    "${mozillaConfigPath}/firefox";
+-
+-  profilesPath =
+-    if isDarwin then "${firefoxConfigPath}/Profiles" else firefoxConfigPath;
+-
+   # The extensions path shared by all profiles; will not be supported
+   # by future Firefox versions.
+   extensionPath = "extensions/{ec8030f7-c20a-464f-9b0e-13a3a9e97384}";
+@@ -244,6 +233,45 @@ in {
+         };
+       };
+ 
++      mozillaConfigPath = mkOption {
++        type = types.str;
++        default = if isDarwin then
++          "Library/Application Support/Mozilla"
++        else
++          ".mozilla";
++        description = ''
++          Path used for add-ons.
++        '';
++      };
++
++      firefoxConfigPath = mkOption {
++        type = types.str;
++        default = if isDarwin then
++          "Library/Application Support/Firefox"
++        else
++          ".mozilla/firefox";
++        example = literalExpression ''
++          ".librewolf"
++        '';
++        description = ''
++          Path used for the config of firefox.
++        '';
++      };
++
++      profilesPath = mkOption {
++        type = types.str;
++        default = if isDarwin then
++          "Library/Application Support/Firefox/Profiles"
++        else
++          ".mozilla/firefox";
++        example = literalExpression ''
++          ".librewolf"
++        '';
++        description = ''
++          Path used for the profiles.
++        '';
++      };
++
+       profiles = mkOption {
+         type = types.attrsOf (types.submodule ({ config, name, ... }: {
+           options = {
+@@ -675,29 +703,29 @@ in {
+     home.packages = lib.optional (cfg.finalPackage != null) cfg.finalPackage;
+ 
+     home.file = mkMerge ([{
+-      "${firefoxConfigPath}/profiles.ini" =
++      "${cfg.firefoxConfigPath}/profiles.ini" =
+         mkIf (cfg.profiles != { }) { text = profilesIni; };
+     }] ++ flip mapAttrsToList cfg.profiles (_: profile: {
+-      "${profilesPath}/${profile.path}/.keep".text = "";
++      "${cfg.profilesPath}/${profile.path}/.keep".text = "";
+ 
+-      "${profilesPath}/${profile.path}/chrome/userChrome.css" =
++      "${cfg.profilesPath}/${profile.path}/chrome/userChrome.css" =
+         mkIf (profile.userChrome != "") { text = profile.userChrome; };
+ 
+-      "${profilesPath}/${profile.path}/chrome/userContent.css" =
++      "${cfg.profilesPath}/${profile.path}/chrome/userContent.css" =
+         mkIf (profile.userContent != "") { text = profile.userContent; };
+ 
+-      "${profilesPath}/${profile.path}/user.js" = mkIf (profile.settings != { }
+-        || profile.extraConfig != "" || profile.bookmarks != [ ]) {
++      "${cfg.profilesPath}/${profile.path}/user.js" = mkIf (profile.settings
++        != { } || profile.extraConfig != "" || profile.bookmarks != [ ]) {
+           text =
+             mkUserJs profile.settings profile.extraConfig profile.bookmarks;
+         };
+ 
+-      "${profilesPath}/${profile.path}/containers.json" =
++      "${cfg.profilesPath}/${profile.path}/containers.json" =
+         mkIf (profile.containers != { }) {
+           text = mkContainersJson profile.containers;
+         };
+ 
+-      "${profilesPath}/${profile.path}/search.json.mozlz4" = mkIf
++      "${cfg.profilesPath}/${profile.path}/search.json.mozlz4" = mkIf
+         (profile.search.default != null || profile.search.privateDefault != null
+           || profile.search.order != [ ] || profile.search.engines != { }) {
+             force = profile.search.force;
+@@ -844,7 +872,7 @@ in {
+             '';
+           };
+ 
+-      "${profilesPath}/${profile.path}/extensions" =
++      "${cfg.profilesPath}/${profile.path}/extensions" =
+         mkIf (profile.extensions != [ ]) {
+           source = let
+             extensionsEnvPkg = pkgs.buildEnv {

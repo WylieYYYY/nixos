@@ -2,6 +2,7 @@
 
   # Patched home manager Nix expression.
   # - Adds configuration for custom configuration and profile paths.
+  #   - Lifted from nix-community/home-manager#3339.
   home-manager = { pkgs, ... }: pkgs.srcOnly rec {
     pname = "home-manager-patched";
     version = "release-23.11";
