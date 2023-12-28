@@ -1,0 +1,13 @@
+diff --git a/pkgs/firefox-addons/default.nix b/pkgs/firefox-addons/default.nix
+index 86e7aa1..adc374d 100644
+--- a/pkgs/firefox-addons/default.nix
++++ b/pkgs/firefox-addons/default.nix
+@@ -8,7 +8,7 @@ let
+     stdenv.mkDerivation {
+       name = "${pname}-${version}";
+ 
+-      inherit meta;
++      meta = meta // { inherit addonId; };
+ 
+       src = fetchurl { inherit url sha256; };
+ 

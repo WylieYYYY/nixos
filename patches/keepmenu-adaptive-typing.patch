@@ -1,0 +1,28 @@
+diff --git a/keepmenu/type.py b/keepmenu/type.py
+index bc2c093..7beadcb 100644
+--- a/keepmenu/type.py
++++ b/keepmenu/type.py
+@@ -115,6 +115,10 @@ def type_entry(entry, db_autotype=None):
+             entry.autotype_sequence is not None and \
+             entry.autotype_sequence != 'None':
+         sequence = entry.autotype_sequence
++    if sequence == '{AT:ADAPTIVE}':
++        sequence = '{PASSWORD}{ENTER}'
++        if entry.deref('username') is not None:
++            sequence = '{USERNAME}{TAB}' + sequence
+     tokens = tokenize_autotype(sequence)
+ 
+     library = "pynput"
+@@ -240,12 +244,6 @@ def type_entry_xdotool(entry, tokens):
+             elif token in AUTOTYPE_TOKENS:
+                 cmd = ['xdotool'] + AUTOTYPE_TOKENS[token]
+                 call(cmd)
+-                # Add extra {ENTER} key tap for first instance of {ENTER}. It
+-                # doesn't get recognized for some reason.
+-                if enter_idx is True and token in ("{ENTER}", "~"):
+-                    cmd = ['xdotool'] + AUTOTYPE_TOKENS[token]
+-                    call(cmd)
+-                    enter_idx = False
+             else:
+                 dmenu_err(f"Unsupported auto-type token (xdotool): \"{token}\"")
+                 return

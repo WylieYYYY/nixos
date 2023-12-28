@@ -1,0 +1,13 @@
+diff --git a/package.json b/package.json
+index 6e788e6..b900371 100644
+--- a/package.json
++++ b/package.json
+@@ -11,7 +11,7 @@
+     "pkg-all": "npm run pkg-linux && npm run pkg-macos && npm run pkg-win",
+     "pkg": "pkg",
+     "cleanup": "git clean -fX tests/ && git clean -fX src/",
+-    "build": " npm run cleanup && tsc",
++    "build": "tsc",
+     "check-all": "npm run build && npm run lint && npm run coverage && npm run audit",
+     "audit": "npm audit --parseable",
+     "lint": "npx eslint .",
