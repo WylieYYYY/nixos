@@ -1,4 +1,4 @@
-{ lib, changeSet, iniString, ... }:
+{ changeSet, iniString, lib, ... }:
 
 # Custom INI manipulator that preserves repeating keys.
 # Parameters:
