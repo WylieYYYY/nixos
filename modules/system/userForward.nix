@@ -6,6 +6,7 @@
 # - mainProgram: Name of the executable, null if the package has main program metadata.
 # - user: Designated user to run the application.
 # - port: Port to run Pulseaudio server on, defaults to 4656.
+# Returns: Store path of the created shell script.
 
 let
   escape = lib.escapeShellArg;
