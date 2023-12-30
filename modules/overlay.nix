@@ -6,6 +6,7 @@
 let
   applications = {
     distro-grub-themes               = ./applications/distro-grub-themes.nix;
+    firefox-addons.cubicle           = ./applications/extensions/firefox-cubicle.nix;
     firefox-addons.seventv           = ./applications/extensions/firefox-7tv.nix;
     gitlab-ci-local                  = ./applications/gitlab-ci-local.nix;
     nur.repos.rycee                  = (import ./system/patchedExpressions.nix).nur-rycee; 

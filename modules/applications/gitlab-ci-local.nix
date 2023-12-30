@@ -1,4 +1,4 @@
-{ buildNpmPackage, fetchFromGitHub }:
+{ buildNpmPackage, fetchFromGitHub, ... }:
 
 # Patched Gitlab CI local runner.
 # - Removes Git cleanup as fetches do not include `.git`.
