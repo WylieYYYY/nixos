@@ -16,6 +16,7 @@ let
       };
       source = lib.mkOption {
         type = lib.types.path;
+        apply = lib.removePrefix config.home.homeDirectory;
         description = "Source file to be put in the store and copied in place on activation.";
       };
     };
@@ -37,7 +38,7 @@ in
     };
   in {
     "${name}" = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      $DRY_RUN_CMD mkdir --parent $VERBOSE_ARG $(dirname "$HOME"/${escape name})
+      $DRY_RUN_CMD mkdir --parent $VERBOSE_ARG "$(dirname "$HOME"/${escape name})"
       $DRY_RUN_CMD install --mode ${value.mode} --no-target-directory $VERBOSE_ARG \
       ${file} "$HOME"/${escape name}
     '';
