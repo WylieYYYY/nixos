@@ -8,7 +8,7 @@
     version = "release-23.11";
     src = builtins.fetchTarball {
       url = "https://github.com/nix-community/home-manager/archive/${version}.tar.gz";
-      sha256 = "16ab1k33aivqc5ighi95nh28pssbds5glz3bb371gb06qpiydihl";
+      sha256 = "1a2b1y8w7wm6shiawqic88j6sp6z43hq3p3852dgz6jbvj8lq5a1";
     };
     patches = [ ./../../patches/firefox-path-options.patch ];
   };
