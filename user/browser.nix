@@ -41,17 +41,9 @@ in
 
   imports = [ ./../modules/system/writableHomeFile.nix ];
 
-  # Rollback Librewolf version, latest version available is buggy.
-  # todo: Remove version override once a newer version is available.
-  nixpkgs.overlays = [(final: prev: let
-    librewolf119 = ((import (prev.fetchFromGitHub {
-      owner = "nixos";
-      repo = "nixpkgs";
-      rev = "0b74f7fd8d5085b4aadbc0ff6eda1a68cf4d3f57";
-      sha256 = "0PdoR7zR5aFASBsQ2+WFCNi+gxg/7782ZbGfMvp9fQM=";
-    })) { }).librewolf;
-  in {
-    librewolf = librewolf119.override {
+  # Adds native messaging host for Tridactyl.
+  nixpkgs.overlays = [(final: prev: {
+    librewolf = prev.librewolf.override {
       nativeMessagingHosts = [ pkgs.tridactyl-native ];
     };
   })];

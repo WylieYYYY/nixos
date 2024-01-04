@@ -10,6 +10,7 @@ let
     firefox-addons.seventv           = ./applications/extensions/firefox-7tv.nix;
     gitlab-ci-local                  = ./applications/gitlab-ci-local.nix;
     nur.repos.rycee                  = (import ./system/patchedExpressions.nix).nur-rycee; 
+    shellfront                       = ./applications/shellfront.nix;
   };
 in
 

@@ -280,6 +280,12 @@ in
         launcher_item_app = null;
         time1_format = "%H:%M.%S";
         time2_format = "%Y-%m-%d";
+        clock_lclick_command = lib.getExe (pkgs.writeShellScriptBin "calendar" ''
+          ${lib.getExe pkgs.shellfront} -Tps 21x8 -g 3 -c 'echo -n \
+              "$(${lib.getExe' pkgs.ncurses "tput"} bold; \
+              ${lib.getExe' pkgs.expect "unbuffer"} cal | \
+              ${lib.getExe pkgs.lolcat} -ft -) "; sleep infinity'
+        '');
       };
       iniString = builtins.readFile "${pkgs.tint2}/etc/xdg/tint2/tint2rc";
     };
