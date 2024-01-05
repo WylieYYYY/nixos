@@ -1,0 +1,27 @@
+diff --git a/Papirus/16x16/panel/blueman-active.svg b/Papirus/16x16/panel/blueman-active.svg
+index af9ceb3ec1..439e773fcc 120000
+--- a/Papirus/16x16/panel/blueman-active.svg
++++ b/Papirus/16x16/panel/blueman-active.svg
+@@ -1 +1 @@
+-bluetooth-active.svg
+\ No newline at end of file
++bluetooth-paired.svg
+\ No newline at end of file
+diff --git a/Papirus/22x22/panel/blueman-active.svg b/Papirus/22x22/panel/blueman-active.svg
+index af9ceb3ec1..439e773fcc 120000
+--- a/Papirus/22x22/panel/blueman-active.svg
++++ b/Papirus/22x22/panel/blueman-active.svg
+@@ -1 +1 @@
+-bluetooth-active.svg
+\ No newline at end of file
++bluetooth-paired.svg
+\ No newline at end of file
+diff --git a/Papirus/24x24/panel/blueman-active.svg b/Papirus/24x24/panel/blueman-active.svg
+index af9ceb3ec1..439e773fcc 120000
+--- a/Papirus/24x24/panel/blueman-active.svg
++++ b/Papirus/24x24/panel/blueman-active.svg
+@@ -1 +1 @@
+-bluetooth-active.svg
+\ No newline at end of file
++bluetooth-paired.svg
+\ No newline at end of file

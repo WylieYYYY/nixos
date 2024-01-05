@@ -1,4 +1,4 @@
-{ pkgs, stdenv, ... }:
+{ pkgs, stdenv, fetchFromGitLab, ... }:
 
 # Simple frontend for terminal applications and Linux shell scripts.
 
@@ -8,7 +8,7 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = with pkgs; [ autoreconfHook pkg-config ];
   buildInputs = with pkgs; [ gtk3 vte ];
-  src = pkgs.fetchFromGitLab {
+  src = fetchFromGitLab {
     owner = "WylieYYYY";
     repo = pname;
     rev = version;

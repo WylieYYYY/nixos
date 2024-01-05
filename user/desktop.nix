@@ -85,6 +85,13 @@ in
   ++ lib.optional (persist ? browserPersistPath)
       (import ./browser.nix (args // { inherit persist; }));
 
+  # Patch to make Blueman's icon change when a device is connected.
+  nixpkgs.overlays = [(final: prev: {
+    papirus-icon-theme = prev.papirus-icon-theme.overrideAttrs (old: {
+      patches = (old.patches or [ ]) ++ [ ./../patches/icons-blueman.patch ];
+    });
+  })];
+
   xsession = {
     enable = true;
     windowManager.command = lib.getExe' pkgs.openbox "openbox-session";

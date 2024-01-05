@@ -5,7 +5,10 @@
 let
   cfg = config.programs.lutris;
   platform = builtins.elemAt (builtins.split "-" pkgs.system) 0;
-  runnerVersions = name: builtins.fetchurl "https://lutris.net/api/runners/${name}";
+  runnerList = (builtins.fromJSON (builtins.readFile (pkgs.fetchurl {
+    url = "https://lutris.net/api/runners";
+    sha256 = cfg.runnerListSha256;
+  }))).results;
 
   # Global options for Lutris.
   globalOptionsModule = lib.types.submodule {
@@ -32,6 +35,7 @@ let
       };
       sha256 = lib.mkOption {
         type = lib.types.nullOr lib.types.str;
+        default = null;
         description = "Hash value for the version artifact.";
       };
     };
@@ -41,14 +45,14 @@ let
   # todo: Add cache option for the listing in case Lutris remove runners.
   downloadDetail = runnerName: version: (lib.findFirst (variant:
     variant.version == version && variant.architecture == platform
-  ) null (builtins.fromJSON (builtins.readFile (runnerVersions runnerName))).versions).url;
+  ) null (lib.findFirst (runner: runner.slug == runnerName) null runnerList).versions).url;
 
   # Fetches and gets the correct path to install the runner to.
   generateRunnerFiles = name: instances: let
     nestedName = version: if name == "wine" then "/${version}-${platform}" else ""; 
   in (builtins.map (instance: {
     "lutris/runners/${name}${nestedName instance.version}" = {
-      source = builtins.fetchTarball {
+      source = pkgs.fetchzip {
         url = downloadDetail name instance.version;
         sha256 = instance.sha256;
       };
@@ -78,6 +82,12 @@ in
       };
       default = { };
       description = "Runner names to version list.";
+    };
+
+    runnerListSha256 = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "Hash value for the runner list.";
     };
   };
 
