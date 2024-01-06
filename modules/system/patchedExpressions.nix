@@ -3,14 +3,14 @@
   # Patched home manager Nix expression.
   # - Adds configuration for custom configuration and profile paths.
   #   - Lifted from nix-community/home-manager#3339.
-  home-manager = { pkgs, fetchFromGitLab, ... }: pkgs.srcOnly rec {
+  home-manager = { pkgs, fetchFromGitHub, ... }: pkgs.srcOnly rec {
     pname = "home-manager-patched";
-    version = "release-23.11";
-    src = fetchFromGitLab {
+    version = "7e398b3d76bc1503171b1364c9d4a07ac06f3851";
+    src = fetchFromGitHub {
       owner = "nix-community";
       repo = "home-manager";
       rev = version;
-      sha256 = "1a2b1y8w7wm6shiawqic88j6sp6z43hq3p3852dgz6jbvj8lq5a1";
+      sha256 = "QRVMkdxLmv+aKGjcgeEg31xtJEIsYq4i1Kbyw5EPS6g=";
     };
     patches = [ ./../../patches/firefox-path-options.patch ];
   };

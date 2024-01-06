@@ -257,6 +257,7 @@ in
       "XF86AudioMute" = "${lib.getExe pamixer} --toggle-mute";
       "XF86AudioLowerVolume" = "${lib.getExe pamixer} --decrease 2";
       "XF86AudioRaiseVolume" = "${lib.getExe pamixer} --increase 2";
+      "XF86AudioPlay" = "${lib.getExe playerctl} play-pause";
       "XF86MonBrightnessUp" = "${lib.getExe brightnessctl} set +2%";
       "XF86MonBrightnessDown" = "${lib.getExe brightnessctl} set 2%-";
     };
