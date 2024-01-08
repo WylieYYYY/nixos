@@ -16,7 +16,6 @@ let
       };
       source = lib.mkOption {
         type = lib.types.path;
-        apply = lib.removePrefix config.home.homeDirectory;
         description = "Source file to be put in the store and copied in place on activation.";
       };
     };
@@ -31,16 +30,16 @@ in
   };
 
   config.home.activation = lib.mkMerge (lib.mapAttrsToList (name: value: let
-    escape = lib.escapeShellArg;
+    escapedName = lib.escapeShellArg (lib.removePrefix config.home.homeDirectory name);
     file = builtins.path {
       name = builtins.replaceStrings [ "/" ] [ "-" ] name;
       path = value.source;
     };
   in {
     "${name}" = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      $DRY_RUN_CMD mkdir --parent $VERBOSE_ARG "$(dirname "$HOME"/${escape name})"
+      $DRY_RUN_CMD mkdir --parent $VERBOSE_ARG "$(dirname "$HOME"/${escapedName})"
       $DRY_RUN_CMD install --mode ${value.mode} --no-target-directory $VERBOSE_ARG \
-      ${file} "$HOME"/${escape name}
+      ${file} "$HOME"/${escapedName}
     '';
   }) cfg);
 }

@@ -1,7 +1,7 @@
 args@{ persist, config, lib, pkgs, ... }:
 
 # Adds desktop applications, with some MIME and keybind settings.
-# Requires `xmlAttrset.nix` for generating XML documents for LibreOffice and Openbox.  
+# Requires `xmlAttrset.nix` for generating XML documents for Openbox.  
 # Requires `userForward.nix` if isolated applications are used.
 # Requires `repeatableINI.nix` for generating configurations for Tint2.
 # Parameters:
@@ -114,28 +114,6 @@ in
       update = old: "${lib.getExe' pkgs.xfce.xfce4-terminal "xfce4-terminal"}";
     }
   ] (builtins.fromTOML (builtins.readFile "${pkgs.libfm}/etc/xdg/libfm/libfm.conf")));
-
-  # Although LibreOffice replaces read-only file, it respects existing configurations.
-  # Disables the tip of the day popup.
-  xdg.configFile."libreoffice/4/user/registrymodifications.xcu" = {
-    source = xmlAttrset.createOrdered rec {
-      list = [(lib.nameValuePair "item" {
-        "@oor:path" = "/org.openoffice.Office.Common/Misc";
-        prop = {
-          "@oor:name" = "ShowTipOfTheDay";
-          "@oor:op" = "fuse";
-          value."text()" = "false";
-        };
-      })];
-      filepath = xmlAttrset.createRoot root {
-        oor = "http://openoffice.org/2001/registry";
-        xs = "http://www.w3.org/2001/XMLSchema";
-        xsi = "http://www.w3.org/2001/XMLSchema-instance";
-      };
-      root = "oor:items";
-      useNs = false;
-    };
-  };
 
   # Uses dark theme and monospace font for Mousepad.
   xdg.configFile."Mousepad/settings.conf".text = lib.generators.toINI { } {

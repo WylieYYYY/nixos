@@ -22,6 +22,8 @@
       st = "status";
     };
 
+    extraConfig.credential.helper = "cache";
+
     lfs = {
       enable = true;
       skipSmudge = true;
