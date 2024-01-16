@@ -85,8 +85,13 @@ in
   ++ lib.optional (persist ? browserPersistPath)
       (import ./browser.nix (args // { inherit persist; }));
 
-  # Patch to make Blueman's icon change when a device is connected.
+  # Patches for various desktop applications.
+  # - Changes the window behaviour of Feh to have a better viewing experience.
+  # - Makes Blueman's icon change when a device is connected.
   nixpkgs.overlays = [(final: prev: {
+    feh = prev.feh.overrideAttrs (old: {
+      patches = (old.patches or [ ]) ++ [ ./../patches/feh-scaling.patch ];
+    });
     papirus-icon-theme = prev.papirus-icon-theme.overrideAttrs (old: {
       patches = (old.patches or [ ]) ++ [ ./../patches/icons-blueman.patch ];
     });

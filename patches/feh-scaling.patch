@@ -1,0 +1,13 @@
+diff --git a/share/applications/feh.pre b/share/applications/feh.pre
+index 8007630..040ab26 100644
+--- a/share/applications/feh.pre
++++ b/share/applications/feh.pre
+@@ -4,7 +4,7 @@ Name[en_US]=feh
+ GenericName=Image viewer
+ GenericName[en_US]=Image viewer
+ Comment=Image viewer and cataloguer
+-Exec=feh --start-at %u
++Exec=feh --scale-down --geometry 640x480 --start-at %u
+ Terminal=false
+ Type=Application
+ Icon=feh

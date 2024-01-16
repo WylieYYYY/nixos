@@ -10,6 +10,11 @@
 
   home.packages = [ pkgs.gitlab-ci-local ];
 
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+  };
+
   programs.git = {
     enable = true;
     userEmail = lib.mkIf (persist ? gitUserEmail) persist.gitUserEmail;
@@ -22,7 +27,11 @@
       st = "status";
     };
 
-    extraConfig.credential.helper = "cache";
+    extraConfig = {
+      core.excludesFile = builtins.toString (pkgs.writeText "git-ignore"
+          (lib.concatStringsSep "\n" [ ".direnv" ".envrc" "shell.nix" ]));
+      credential.helper = "cache";
+    };
 
     lfs = {
       enable = true;
