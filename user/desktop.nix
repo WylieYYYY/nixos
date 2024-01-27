@@ -16,6 +16,7 @@ args@{ persist, config, lib, pkgs, ... }:
 #     - expects: { lib, pkgs, ... }:
 #         { <username> = { name = <application name>; value = <command>; }, ... }
 #   - kdbxPath?: Path to the Keepass database for Keepmenu.
+#   - mouseAllowedDomains?: Domains that are excluded from Tridactyl's no mouse mode.
 #   - useCubicleExtension?: Whether the browser persisting directory has a build of Cubicle to link.
 #   - wallpaperPath?: Path to a wallpaper file for Nitrogen.
 
@@ -87,11 +88,16 @@ in
 
   # Patches for various desktop applications.
   # - Changes the window behaviour of Feh to have a better viewing experience.
+  # - Adds TeX dependency for Gummi.
   # - Makes Blueman's icon change when a device is connected.
   nixpkgs.overlays = [(final: prev: {
     feh = prev.feh.overrideAttrs (old: {
       patches = (old.patches or [ ]) ++ [ ./../patches/feh-scaling.patch ];
     });
+    gummi = prev.symlinkJoin {
+      name = "gummi";
+      paths = [ prev.gummi prev.texlive.combined.scheme-basic ];
+    };
     papirus-icon-theme = prev.papirus-icon-theme.overrideAttrs (old: {
       patches = (old.patches or [ ]) ++ [ ./../patches/icons-blueman.patch ];
     });
@@ -109,6 +115,11 @@ in
   # Some nice icons for applications, files, and the like.
   home.file.".icons/default/index.theme".text = lib.generators.toINI { } {
     "icon theme" = { Inherits = "Bibata-Modern-Amber"; };
+  };
+
+  # Uses a more readable color scheme, as the texts blend in with the GTK theme.
+  xdg.configFile."gummi/gummi.ini".text = lib.generators.toINI { } {
+    Editor.style_scheme = "oblivion";
   };
 
   # Disables trash and specifies terminal emulator for quick access in directories.

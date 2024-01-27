@@ -5,6 +5,7 @@
 # - persist: Attribute set of persisting settings.
 #   - browserPersistPath: Persisting directory for browser.
 #     - expects: extensions.json, extension-settings.json
+#   - mouseAllowedDomains?: Domains that are excluded from Tridactyl's no mouse mode.
 #   - useCubicleExtension?: Whether the persisting directory has a build of Cubicle to link.
 
 let
@@ -117,11 +118,16 @@ in
   };
 
   # Tridactyl configurations for cursorless browsing.
-  xdg.configFile."tridactyl/tridactylrc".text = ''
+  xdg.configFile."tridactyl/tridactylrc".text = let
+    mouseAllowedRegex = lib.concatStringsSep "|" (builtins.map lib.escapeRegex
+        ((persist.mouseAllowedDomains or [ ]) ++ [
+          "0.0.0.0" "127.0.0.1" "localhost"
+        ]));
+  in ''
     bind s hint -;
     colors dark
 
-    autocmd DocLoad .* no_mouse_mode
+    autocmd DocLoad ^https?://(?!(?:${mouseAllowedRegex})(?:[:/]|$)) no_mouse_mode
     autocmd DocLoad ^https://search.nixos.org/ unfocus
     autocmd UriChange ^https://search.nixos.org/ unfocus
     autocmd DocLoad ^https://www.twitch.tv/ hint -c main .simplebar-scroll-content

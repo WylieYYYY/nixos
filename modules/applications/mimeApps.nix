@@ -62,7 +62,7 @@ in
     xdg.mimeApps = {
       enable = true;
       defaultApplications = builtins.mapAttrs (name: value:
-        if isPackage value
+        if isPackage value && value ? pname
         then "${value.pname}.desktop"
         else "${value.name}.desktop"
       ) cfg.defaultApplications;
