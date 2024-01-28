@@ -4,7 +4,7 @@
 
 stdenv.mkDerivation rec {
   pname = "shellfront";
-  version = "05b5c82a5fa2639ab30d314ef62b79caae1ca398";
+  version = "c091997f724e89a86f600ae9abc3ac944985b193";
 
   nativeBuildInputs = with pkgs; [ autoreconfHook pkg-config ];
   buildInputs = with pkgs; [ gtk3 vte ];
@@ -12,10 +12,8 @@ stdenv.mkDerivation rec {
     owner = "WylieYYYY";
     repo = pname;
     rev = version;
-    sha256 = "jyxO9e8QqTUikt6EriE270Kb8/NOVfeZ1zuqNW/v3D8=";
+    sha256 = "4D2uNfoePDIWD2X/Jv+UCtBxX3Gl2hXPmE/sAR+iRPk=";
   };
-
-  patches = [ ./../../patches/shellfront.patch ];
 
   buildPhase = ''
     NIX_CFLAGS_COMPILE="$(pkg-config --cflags gtk+-3.0 vte-2.91) $NIX_CFLAGS_COMPILE"

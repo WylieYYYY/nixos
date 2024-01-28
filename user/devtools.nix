@@ -15,6 +15,28 @@
     nix-direnv.enable = true;
   };
 
+  programs.fish = {
+    enable = true;
+    interactiveShellInit = ''
+      fish_config theme choose 'ayu Dark'
+      set fish_greeting
+    '';
+
+    # Creates a temporary private shell with the given packages.
+    shellAbbrs.try = ''${lib.getExe' pkgs.nix "nix-shell"} --command \
+        '${lib.getExe pkgs.fish} --private' --packages'';
+
+    # Searches Youtube with the query and plays the first audio found.
+    functions.play = ''
+      set query (string join ' ' $argv)
+      set log (${lib.getExe' pkgs.vlc "cvlc"} --play-and-exit \
+      (${lib.getExe pkgs.yt-dlp} --get-url --format bestaudio "ytsearch:$query") 2>&1)
+      set play_status $status
+      [ $play_status -ne 0 ] && printf '%s\n' "$log" >&2
+      return $play_status
+    '';
+  };
+
   programs.git = {
     enable = true;
     userEmail = lib.mkIf (persist ? gitUserEmail) persist.gitUserEmail;

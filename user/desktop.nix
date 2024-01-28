@@ -15,7 +15,7 @@ args@{ persist, config, lib, pkgs, ... }:
 #   - isolatedEntries?: Function yielding an attribute set of user names to isolated menu entries.
 #     - expects: { lib, pkgs, ... }:
 #         { <username> = { name = <application name>; value = <command>; }, ... }
-#   - kdbxPath?: Path to the Keepass database for Keepmenu.
+#   - kdbxPath?: Path to the Keepass database for KeepassXC and Keepmenu.
 #   - mouseAllowedDomains?: Domains that are excluded from Tridactyl's no mouse mode.
 #   - useCubicleExtension?: Whether the browser persisting directory has a build of Cubicle to link.
 #   - wallpaperPath?: Path to a wallpaper file for Nitrogen.
@@ -121,6 +121,24 @@ in
   xdg.configFile."gummi/gummi.ini".text = lib.generators.toINI { } {
     Editor.style_scheme = "oblivion";
   };
+
+  # Sets default database file and dark theme.
+  home.writableFile = lib.mkIf (persist ? kdbxPath) (lib.mkMerge (builtins.map (path: {
+    "${path}/keepassxc/keepassxc.ini".source = pkgs.writeText "keepass-ini" (
+      lib.generators.toINI { } {
+        General = rec {
+          ConfigVersion = 2;
+          LastDatabases = builtins.toString persist.kdbxPath;
+          LastActiveDatabases = LastDatabases;
+          LastOpenedDatabases = LastDatabases;
+        };
+        GUI = {
+          ApplicationTheme = "dark";
+          CompactMode = true;
+        };
+      }
+    );
+  }) (with config.xdg; [ cacheHome configHome ])));
 
   # Disables trash and specifies terminal emulator for quick access in directories.
   xdg.configFile."libfm/libfm.conf".text = lib.generators.toINI { } (lib.updateManyAttrsByPath [
