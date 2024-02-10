@@ -14,7 +14,7 @@ buildNpmPackage rec {
     sha256 = "c2OMJfy/lAdCJJiuCccQYc4sf87vU9B7oaRHmISdI+M=";
   };
 
-  patches = [ ./../../patches/gitlab-ci-local-no-cleanup.patch ];
+  patches = [ ./../../../patches/gitlab-ci-local-no-cleanup.patch ];
 
   npmDepsHash = "sha256-mup3dsOXxSglf0Wl5bbMilYbwT6uP4Z27V7xdkEWTA4=";
 

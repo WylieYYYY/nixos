@@ -30,10 +30,18 @@
     functions.play = ''
       set query (string join ' ' $argv)
       set log (${lib.getExe' pkgs.vlc "cvlc"} --play-and-exit \
-      (${lib.getExe pkgs.yt-dlp} --get-url --format bestaudio "ytsearch:$query") 2>&1)
+      (${lib.getExe pkgs.yt-dlp} --get-url --format bestaudio ytsearch:$query) 2>&1)
       set play_status $status
       [ $play_status -ne 0 ] && printf '%s\n' "$log" >&2
       return $play_status
+    '';
+
+    # Overrides Which to display the canonicalized name on NixOS.
+    functions.which = ''
+      set path (${lib.getExe pkgs.which} $argv[1])
+      set which_status $status
+      [ $which_status -ne 0 ] && return $which_status
+      ${lib.getExe' pkgs.coreutils "readlink"} --canonicalize $path
     '';
   };
 
@@ -69,6 +77,7 @@
 
     userSettings = {
       "files.enableTrash" = false;
+      "git.terminalAuthentication" = false;
       "javascript.validate.enable" = false;
       "js/ts.implicitProjectConfig.checkJs" = true;
       "nixEnvSelector.nixFile" = "\${workspaceRoot}/shell.nix";

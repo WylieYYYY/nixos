@@ -122,6 +122,19 @@ in
     Editor.style_scheme = "oblivion";
   };
 
+  # Adds and orders IBus engines to include RIME.
+  dconf.settings."desktop/ibus/general" = with lib.hm.gvariant; rec {
+    engines-order = mkArray type.string [ "xkb:us::eng" "rime" ];
+    preload-engines = engines-order;
+  };
+
+  # Adds Cantonese input method.
+  xdg.configFile."ibus/rime/default.custom.yaml" = {
+    text = lib.generators.toYAML { } {
+      patch.schema_list = [{ schema = "jyut6ping3_ipa"; }];
+    };
+  };
+
   # Sets default database file and dark theme.
   home.writableFile = lib.mkIf (persist ? kdbxPath) (lib.mkMerge (builtins.map (path: {
     "${path}/keepassxc/keepassxc.ini".source = pkgs.writeText "keepass-ini" (
