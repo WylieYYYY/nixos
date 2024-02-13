@@ -9,6 +9,8 @@ args@{ persist, config, lib, pkgs, ... }:
 #   - allowedUnfreePackages?: Some unfree package names to allow and isolate.
 #   - browserPersistPath?: Persisting directory for browser.
 #     - expects: extensions.json, extension-settings.json
+#   - containerSuffixes?: Attribute set of container names to their suffixes.
+#     - Work?: Suffixes for the work container.
 #   - gitUserEmail?: Default email associated with Git.
 #   - gitUserName?: Default user name associated with Git.
 #   - hostname?: Display name for the top-left corner of the desktop.

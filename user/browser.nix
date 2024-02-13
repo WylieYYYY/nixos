@@ -5,6 +5,8 @@
 # - persist: Attribute set of persisting settings.
 #   - browserPersistPath: Persisting directory for browser.
 #     - expects: extensions.json, extension-settings.json
+#   - containerSuffixes?: Attribute set of container names to their suffixes.
+#     - Work?: Suffixes for the work container.
 #   - mouseAllowedDomains?: Domains that are excluded from Tridactyl's no mouse mode.
 #   - useCubicleExtension?: Whether the persisting directory has a build of Cubicle to link.
 
@@ -33,7 +35,8 @@ let
   in lib.genAttrs addonIds (addonId:
     (builtins.readFile (pkgs.runCommand "generate-uuid-${addonId}" { } ''
       ${lib.getExe' pkgs.libuuid "uuidgen"} --sha1 --namespace ${uuidNamespace} \
-          --name ${lib.escapeShellArg addonId} | tr --delete '\n' > $out
+          --name ${lib.escapeShellArg addonId} | \
+          ${lib.getExe' pkgs.coreutils "tr"} --delete '\n' > $out
     ''))
   );
 in
@@ -115,6 +118,17 @@ in
         "xpinstall.signatures.required" = false;
       };
       inherit extensions;
+    };
+  };
+
+  programs.cubicle = lib.mkIf (persist ? containerSuffixes) {
+    enable = true;
+    inherit profileName;
+
+    containers."Work" = lib.mkIf (persist.containerSuffixes ? Work) {
+      color = "blue";
+      icon = "briefcase";
+      suffixes = persist.containerSuffixes.Work;
     };
   };
 
