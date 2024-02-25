@@ -43,7 +43,10 @@ in
 
 {
 
-  imports = [ ./../modules/system/writableHomeFile.nix ];
+  imports = [
+    ./../modules/applications/cubicle.nix
+    ./../modules/system/writableHomeFile.nix
+  ];
 
   # Adds native messaging host for Tridactyl.
   nixpkgs.overlays = [(final: prev: {

@@ -2,7 +2,7 @@
 
 # Collection of configurations to reduce annoyance.
 # Disables first run notifications and popups.
-# Requires `xmlAttrset.nix` for generating XML documents for LibreOffice.  
+# Parameters:
 # - persist: Attribute set of persisting settings.
 #   - bluemanNoNotification?: whether to suppress Blueman notifications (defaults to true).
 

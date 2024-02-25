@@ -1,7 +1,6 @@
 { config, lib, pkgs, ... }:
 
 # Openbox configurations.
-# Requires `xmlAttrset.nix` for generating XML documents from expressions.
 
 let
   cfg = config.programs.openbox;

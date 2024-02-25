@@ -1,9 +1,6 @@
 args@{ persist, config, lib, pkgs, ... }:
 
 # Adds desktop applications, with some MIME and keybind settings.
-# Requires `xmlAttrset.nix` for generating XML documents for Openbox.  
-# Requires `userForward.nix` if isolated applications are used.
-# Requires `repeatableINI.nix` for generating configurations for Tint2.
 # Parameters:
 # - persist: Attribute set of persisting settings.
 #   - allowedUnfreePackages?: Some unfree package names to allow and isolate.
@@ -11,6 +8,7 @@ args@{ persist, config, lib, pkgs, ... }:
 #     - expects: extensions.json, extension-settings.json
 #   - containerSuffixes?: Attribute set of container names to their suffixes.
 #     - Work?: Suffixes for the work container.
+#   - direnvPersistPath?: Persisting directory for direnv.
 #   - gitUserEmail?: Default email associated with Git.
 #   - gitUserName?: Default user name associated with Git.
 #   - hostname?: Display name for the top-left corner of the desktop.
@@ -82,6 +80,8 @@ in
 
   imports = [
     ./../modules/applications/mimeApps.nix
+    ./../modules/applications/nitrogen.nix
+    ./../modules/applications/openbox.nix
     (import ./devtools.nix (args // { inherit persist; }))
     (import ./rofi.nix (args // { inherit appMenu persist; }))
   ]

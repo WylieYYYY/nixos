@@ -1,7 +1,6 @@
 { config, lib, pkgs, ... }:
 
 # MIME type configurations with custom extension support.
-# Requires `xmlAttrset.nix` for generating XML documents from expressions.
 
 let
   cfg = config.custom.mimeApps;

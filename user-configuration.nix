@@ -1,7 +1,7 @@
 args@{ impermanence-repo, persist, config, lib, pkgs, ... }:
 
 # Multi-user configurations with home manager.
-# Requires `isolatedUsers.nix` for generating profiles for application isolation.
+# Parameters:
 # - impermanence-repo: Filesystem path to the root of the impermanence module repository.
 # - persist: Attribute set of persisting settings.
 #   - isolatedEntries?: Function yielding an attribute set of user names to isolated menu entries.

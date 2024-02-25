@@ -1,8 +1,9 @@
-{ persist, lib, pkgs, ... }:
+{ persist, config, lib, pkgs, ... }:
 
 # Adds development tools such as Git and VSCode.
 # Parameters:
 # - persist: Attribute set of persisting settings.
+#   - direnvPersistPath?: Persisting directory for direnv.
 #   - gitUserEmail?: Default email associated with Git.
 #   - gitUserName?: Default user name associated with Git.
 
@@ -14,6 +15,10 @@
     enable = true;
     nix-direnv.enable = true;
   };
+
+  # Persists the direnv allow files for impermanence.
+  xdg.dataFile."direnv/allow".source = lib.mkIf (persist ? direnvPersistPath)
+      (config.lib.file.mkOutOfStoreSymlink persist.direnvPersistPath);
 
   programs.fish = {
     enable = true;
