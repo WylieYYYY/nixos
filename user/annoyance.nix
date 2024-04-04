@@ -52,9 +52,10 @@ in
   };
 
   # Stops VLC from asking for network metadata access.
-  # Don't need metadata for media.
+  # Don't need metadata for media, and do not resize when the video changes.
   xdg.configFile."vlc/vlcrc".text = lib.generators.toINI { } {
     qt.qt-privacy-ask = 0;
+    qt.qt-video-autoresize = 0;
     core.metadata-network-access = 0;
   };
 

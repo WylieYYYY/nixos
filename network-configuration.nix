@@ -62,6 +62,9 @@
     '';
   };
 
+  # Sensible file permission for synching files with service user.
+  systemd.services.syncthing.serviceConfig.UMask = "0002";
+
   # Syncthing with predefined folder shared to all devices.
   services.syncthing = lib.mkIf (persist ? syncthingIds && persist ? syncthingDir) {
     enable = true;

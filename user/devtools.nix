@@ -28,8 +28,10 @@
     '';
 
     # Creates a temporary private shell with the given packages.
-    shellAbbrs.try = ''${lib.getExe' pkgs.nix "nix-shell"} --command \
-        '${lib.getExe pkgs.fish} --private' --packages'';
+    shellAbbrs.try = lib.concatStringsSep " " [
+      ''${lib.getExe' pkgs.nix "nix-shell"} --command''
+      '''${lib.getExe pkgs.fish} --private' --packages''
+    ];
 
     # Searches Youtube with the query and plays the first audio found.
     functions.play = ''
