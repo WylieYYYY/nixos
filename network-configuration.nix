@@ -30,10 +30,10 @@
   networking.nameservers = lib.mkIf (persist ? dns) persist.dns;
   services.resolved = lib.mkIf (persist ? dns) {
     enable = true;
+    dnsovertls = "true";
     dnssec = "true";
     domains = [ "~." ];
     fallbackDns = persist.dns;
-    extraConfig = "DNSOverTLS=yes";
   };
 
   # Firewall with additional entries for offline application isolation.

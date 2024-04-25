@@ -23,6 +23,7 @@
   programs.fish = {
     enable = true;
     interactiveShellInit = ''
+      bind \cc ctrl_c
       fish_config theme choose 'ayu Dark'
       set fish_greeting
     '';
@@ -33,11 +34,22 @@
       '''${lib.getExe pkgs.fish} --private' --packages''
     ];
 
+    # Overrides Ctrl+C to save incomplete commands to history.
+    functions.ctrl_c = ''
+      set buffer (commandline --current-buffer)
+      [ -z "$buffer" ] && return
+      set cmd (string replace --all -- \\ \\\\ $buffer | string join '\n')
+      printf '- cmd: %s\n  when: %s\n' $cmd (${lib.getExe' pkgs.coreutils "date"} +%s) \
+          >> ${lib.escapeShellArg config.xdg.dataHome}/fish/fish_history
+      history merge
+      commandline --function cancel-commandline
+    '';
+
     # Searches Youtube with the query and plays the first audio found.
     functions.play = ''
       set query (string join ' ' $argv)
       set log (${lib.getExe' pkgs.vlc "cvlc"} --play-and-exit \
-      (${lib.getExe pkgs.yt-dlp} --get-url --format bestaudio ytsearch:$query) 2>&1)
+          (${lib.getExe pkgs.yt-dlp} --get-url --format bestaudio ytsearch:$query) 2>&1)
       set play_status $status
       [ $play_status -ne 0 ] && printf '%s\n' "$log" >&2
       return $play_status

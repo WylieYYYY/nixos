@@ -5,10 +5,11 @@
 let
   cfg = config.programs.lutris;
   platform = builtins.elemAt (builtins.split "-" pkgs.system) 0;
-  runnerList = (builtins.fromJSON (builtins.readFile (pkgs.fetchurl {
+  runnerListFile = pkgs.fetchurl {
     url = "https://lutris.net/api/runners";
     sha256 = cfg.runnerListSha256;
-  }))).results;
+  };
+  runnerList = (builtins.fromJSON (builtins.readFile runnerListFile)).results;
 
   # Global options for Lutris.
   globalOptionsModule = lib.types.submodule {
@@ -66,10 +67,13 @@ let
       };
       installer = lib.mkOption {
         type = installerModule;
-        apply = installer: builtins.elemAt (builtins.fromJSON (builtins.readFile (pkgs.fetchurl {
-          url = "https://lutris.net/api/installers/${installer.slug}?format=json";
-          inherit (installer) sha256;
-        }))).results 0;
+        apply = installer: let
+          installerFile = pkgs.fetchurl {
+            url = "https://lutris.net/api/installers/${installer.slug}?format=json";
+            inherit (installer) sha256;
+          };
+          results = (builtins.fromJSON (builtins.readFile installerFile)).results;
+        in (builtins.elemAt results 0) // { storePath = builtins.toString installerFile; };
         description = "Slug for the installer.";
       };
     };
@@ -167,7 +171,11 @@ in
               "WINE_LARGE_ADDRESS_AWARE: '1'"
               "__GL_SHADER_DISK_CACHE: '1'"
             ]
-            game.installer.content;
+            ''
+              # runners: ${runnerListFile}
+              # installer: ${game.installer.storePath}
+              ${game.installer.content}
+            '';
       }) (builtins.attrValues cfg.games);
     in lib.mkMerge ([{
       "lutris/system.yml".text = lib.generators.toYAML { } {
