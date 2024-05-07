@@ -36,8 +36,18 @@ args@{ persist, username, config, lib, pkgs, ... }:
     (import ./annoyance.nix (args // { inherit persist; }))
   ];
 
+  # Caches patched NUR Nix expression to prevent refetch.
+  home.file.".nix-gc-roots/overlay".text = let
+    patchedExpressions = import ./../modules/system/patchedExpressions.nix;
+  in builtins.toString (pkgs.callPackage patchedExpressions.nur-rycee { });
+
   home.persistence = lib.mkIf (persist.users."${username}" ? persistence)
       persist.users."${username}".persistence;
+
+  services.autorandr = {
+    enable = true;
+    ignoreLid = true;
+  };
 
   programs.autorandr = {
     enable = true;

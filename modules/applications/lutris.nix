@@ -80,14 +80,13 @@ let
   };
 
   # Fetches the online listing and match the version and architecture.
-  # todo: Add cache option for the listing in case Lutris remove runners.
   downloadDetail = runnerName: version: (lib.findFirst (variant:
     variant.version == version && variant.architecture == platform
   ) null (lib.findFirst (runner: runner.slug == runnerName) null runnerList).versions).url;
 
   # Fetches and gets the correct path to install the runner to.
   generateRunnerFiles = name: instances: let
-    nestedName = version: if name == "wine" then "/${version}-${platform}" else ""; 
+    nestedName = version: if name == "wine" then "/${version}-${platform}" else "";
   in (builtins.map (instance: {
     "lutris/runners/${name}${nestedName instance.version}" = {
       source = pkgs.fetchzip {

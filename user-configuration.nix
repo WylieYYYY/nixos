@@ -30,6 +30,9 @@ in
     ./modules/system/isolatedUsers.nix
   ];
 
+  # Caches patched home manager Nix expression to prevent refetch.
+  system.extraDependencies = [ home-manager-nix ];
+
   users.isolated = { inherit mainUsernames isolatedUsernames; };
 
   services.accounts-daemon.enable = true;
