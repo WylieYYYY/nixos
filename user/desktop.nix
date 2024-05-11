@@ -35,6 +35,20 @@ let
     ${xdotool} key 'F6'
   '';
 
+  # VLC does not focus on itself when a new file is opened.
+  vlc-focus = let
+    wmctrl = lib.getExe pkgs.wmctrl;
+  in pkgs.writeShellScriptBin "vlc-focus" ''
+    id=""
+    ${lib.getExe' pkgs.vlc "vlc"} --started-from-file "$@" &
+    while [ -z "$id" ]; do
+      id="$(${wmctrl} -xl | ${lib.getExe pkgs.gawk} '$3 == "vlc.vlc" {print $1}' | \
+          ${lib.getExe' pkgs.coreutils "tail"} -1)"
+      sleep 0.1s
+    done
+    ${wmctrl} -ia "$id"
+  '';
+
   # Application menu that is declared as an expression.
   # Translated for Rofi and Openbox.
   appMenu = let
@@ -332,6 +346,11 @@ in
     customMimeTypes = [ "kdbx" "xopp" ];
     defaultApplications = let
       pair = lib.nameValuePair;
+      vlcDesktopItem = pkgs.makeDesktopItem {
+        name = "vlc-focus";
+        desktopName = "VLC media player";
+        exec = "${lib.getExe vlc-focus} %U";
+      };
     in with pkgs; {
       "application/pdf" = librewolf;
       "application/vnd.appimage" = appimage-run;
@@ -344,7 +363,8 @@ in
       "image/jpeg" = feh;
       "image/png" = feh;
       "text/plain" = pair "org.xfce.mousepad" xfce.mousepad;
-      "video/mp4" = vlc;
+      "video/mp4" = pair "vlc-focus" vlcDesktopItem;
+      "video/webm" = pair "vlc-focus" vlcDesktopItem;
 
       "application/vnd.sqlite3" = sqlitebrowser;
       "application/xml" = pair "org.xfce.mousepad" xfce.mousepad;

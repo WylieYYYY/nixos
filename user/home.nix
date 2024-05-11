@@ -52,9 +52,12 @@ args@{ persist, username, config, lib, pkgs, ... }:
   programs.autorandr = {
     enable = true;
     profiles = lib.mkIf (persist ? autorandrProfiles) (persist.autorandrProfiles args);
+    hooks.preswitch = {
+      "reset-warmth" = "${lib.getExe pkgs.redshift} -x";
+    };
     hooks.postswitch = {
       "change-brightness" = "${lib.getExe pkgs.brightnessctl} set 20%";
-      "change-warmth" = "${lib.getExe pkgs.redshift} -PO 4000";
+      "change-warmth" = "${lib.getExe pkgs.redshift} -O 4000";
       "change-background" = "${lib.getExe pkgs.nitrogen} --restore";
     };
   };
