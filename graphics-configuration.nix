@@ -7,6 +7,9 @@
   nixpkgs.config.allowUnfreePredicate = pkg:
     builtins.elem (lib.getName pkg) [ "nvidia-settings" "nvidia-x11" ];
 
+  # Enables module for CUDA compute.
+  boot.kernelModules = [ "nvidia_uvm" ];
+
   services.xserver.videoDrivers = [ "nvidia" ];
   services.xserver.dpi = 96;
 

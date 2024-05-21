@@ -4,6 +4,7 @@
 # Parameters:
 # - persist: Attribute set of persisting settings.
 #   - dns?: A list of DNS server addresses with domain fragments.
+#   - dnssecExcludes?: A list of domains to be excluded from DNSSEC.
 #   - hostname?: Host name to be registered.
 #   - isolatedOutputRules?: Additional NFTables output rules for isolated applications.
 #   - syncthingIds?: Attribute set of device names to Syncthing IDs.
@@ -35,6 +36,10 @@
     domains = [ "~." ];
     fallbackDns = persist.dns;
   };
+
+  # Excludes domains that are not compatible with DNSSEC.
+  environment.etc."dnssec-trust-anchors.d/default.negative".text =
+      lib.mkIf (persist ? dnssecExcludes) (lib.concatStringsSep "\n" persist.dnssecExcludes);
 
   # Firewall with additional entries for offline application isolation.
   networking.firewall.checkReversePath = false;
