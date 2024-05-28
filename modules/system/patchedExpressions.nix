@@ -5,12 +5,12 @@
   #   - Lifted from nix-community/home-manager#3339.
   home-manager = { pkgs, fetchFromGitHub, ... }: pkgs.srcOnly rec {
     pname = "home-manager-patched";
-    version = "7e398b3d76bc1503171b1364c9d4a07ac06f3851";
+    version = "569d9284583909f416f00c44fab86f652c8b2c61";
     src = fetchFromGitHub {
       owner = "nix-community";
       repo = "home-manager";
       rev = version;
-      sha256 = "QRVMkdxLmv+aKGjcgeEg31xtJEIsYq4i1Kbyw5EPS6g=";
+      sha256 = "k+cLJfU6qDV8EO6HEokLt5boPwWXidi0B0F8KJlG3ug=";
     };
     patches = [ ./../../patches/firefox-path-options.patch ];
   };

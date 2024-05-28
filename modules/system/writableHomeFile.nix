@@ -32,7 +32,7 @@ in
   config.home.activation = lib.mkMerge (lib.mapAttrsToList (name: value: let
     escapedName = lib.escapeShellArg (lib.removePrefix config.home.homeDirectory name);
     file = builtins.path {
-      name = builtins.replaceStrings [ "/" ] [ "-" ] name;
+      name = builtins.replaceStrings [ "/" "." ] [ "-" "_" ] name;
       path = value.source;
     };
   in {
