@@ -10,6 +10,7 @@ let
     firefox-addons.cubicle           = ./applications/extensions/firefox-cubicle.nix;
     firefox-addons.seventv           = ./applications/extensions/firefox-7tv.nix;
     gitlab-ci-local                  = ./applications/pkgs/gitlab-ci-local.nix;
+    noto-cjk-mono                    = ./applications/pkgs/noto-cjk-mono.nix;
     nur.repos.rycee                  = { pkgs, ... }: pkgs.callPackage "${pkgs.callPackage nur { }}" { };
     shellfront                       = ./applications/pkgs/shellfront.nix;
   };

@@ -10,7 +10,7 @@
   # Enables module for CUDA compute.
   boot.kernelModules = [ "nvidia_uvm" ];
 
-  services.xserver.videoDrivers = [ "nvidia" ];
+  services.xserver.videoDrivers = [ "modesetting" "intel" "nvidia" ];
   services.xserver.dpi = 96;
 
   hardware.opengl = {

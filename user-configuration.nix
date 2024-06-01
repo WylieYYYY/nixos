@@ -53,6 +53,8 @@ in
 
   users.mutableUsers = false;
 
+  security.sudo.execWheelOnly = true;
+
   # Disables sudo lecture as the lecture state is reset with impermanence.
   security.sudo.extraConfig = "Defaults lecture = never";
 

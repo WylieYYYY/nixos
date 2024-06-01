@@ -70,6 +70,37 @@ in
       seen_onboarding = true;
       upgraded = true;
     };
+    # Adds annoyances and cookie notices filters.
+    "browser-extension-data/${nur.ublock-origin.meta.addonId}/storage.js".text = builtins.toJSON {
+      selectedFilterLists = [
+        "user-filters"
+        "ublock-filters"
+        "ublock-badware"
+        "ublock-privacy"
+        "ublock-quick-fixes"
+        "ublock-unbreak"
+        "easylist"
+        "easyprivacy"
+        "LegitimateURLShortener"
+        "adguard-spyware-url"
+        "urlhaus-1"
+        "curben-phishing"
+        "plowe-0"
+        "fanboy-cookiemonster"
+        "ublock-cookies-easylist"
+        "adguard-cookies"
+        "ublock-cookies-adguard"
+        "easylist-chat"
+        "easylist-newsletters"
+        "easylist-notifications"
+        "easylist-annoyances"
+        "adguard-mobile-app-banners"
+        "adguard-other-annoyances"
+        "adguard-popup-overlays"
+        "adguard-widgets"
+        "ublock-annoyances"
+      ];
+    };
   };
 
   # Suppresses browser warning for new tab change.

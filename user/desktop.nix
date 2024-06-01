@@ -183,7 +183,7 @@ in
     "org/xfce/mousepad/preferences/view" = {
       word-wrap = true;
       use-default-monospace-font = false;
-      font-name = "Fira Code 12";
+      font-name = "Noto Sans Mono CJK HK Regular 12";
 
       show-line-numbers = true;
       color-scheme = "oblivion";
