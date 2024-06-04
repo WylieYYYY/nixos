@@ -19,12 +19,12 @@
   # - Adds addon ID to the package metadata.
   nur-rycee = { pkgs, fetchFromGitLab, ... }: pkgs.srcOnly rec {
     pname = "nur-rycee-patched";
-    version = "d83b840e4681823c517995e31566f7d72d13793e";
+    version = "4118c12978f50c094d2e40146d2b1524012a6dd5";
     src = fetchFromGitLab {
       owner = "rycee";
       repo = "nur-expressions";
       rev = version;
-      sha256 = "JpkjDE9R6grXrxzz6q4wR0kVLhn19/O5YrA8woXtx74=";
+      sha256 = "6cL574j1SSL9At2oZwGarAv9FcwphI9Pd8im+uQ5/bE=";
     };
     patches = [ ./../../patches/nur-firefox-addon-id.patch ];
   };

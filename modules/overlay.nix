@@ -17,7 +17,18 @@ let
 in
 
 {
-  config.nixpkgs.overlays = [(final: prev: prev // (lib.mapAttrsRecursive (_: value:
-    prev.callPackage value { }
-  ) applications))];
+  config.nixpkgs.overlays = [
+    (final: prev: prev // (lib.mapAttrsRecursive (_: value:
+      prev.callPackage value { }
+    ) applications))
+    (final: prev: {
+      libadwaita = prev.libadwaita.overrideAttrs (old: {
+        doCheck = false;
+        patches = (old.patches or [ ]) ++ [(prev.fetchpatch {
+          url = "https://aur.archlinux.org/cgit/aur.git/plain/theming_patch.diff?h=libadwaita-without-adwaita-git&id=685390ce7c5d5614c6b0db545b60a3412262584f";
+          sha256 = "hUtUewagY7ZqgOWKgK5VhE/v3twJZto7G/o4S/gwlBk=";
+        })];
+      });
+    })
+  ];
 }

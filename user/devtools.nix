@@ -37,11 +37,12 @@
     # Overrides Ctrl+C to save incomplete commands to history.
     functions.ctrl_c = ''
       set buffer (commandline --current-buffer)
-      [ -z "$buffer" ] && return
-      set cmd (string replace --all -- \\ \\\\ $buffer | string join '\n')
-      printf '- cmd: %s\n  when: %s\n' $cmd (${lib.getExe' pkgs.coreutils "date"} +%s) \
-          >> ${lib.escapeShellArg config.xdg.dataHome}/fish/fish_history
-      history merge
+      if [ -n "$buffer" ] && [ -z "$fish_private_mode" ]
+        set cmd (string replace --all -- \\ \\\\ $buffer | string join '\n')
+        printf '- cmd: %s\n  when: %s\n' $cmd (${lib.getExe' pkgs.coreutils "date"} +%s) \
+            >> ${lib.escapeShellArg config.xdg.dataHome}/fish/fish_history
+        history merge
+      end
       commandline --function cancel-commandline
     '';
 
