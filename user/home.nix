@@ -41,6 +41,8 @@ args@{ persist, username, config, lib, pkgs, ... }:
     patchedExpressions = import ./../modules/system/patchedExpressions.nix;
   in builtins.toString (pkgs.callPackage patchedExpressions.nur-rycee { });
 
+  nixpkgs.overlays = [ persist.extraOverlayFunc ];
+
   home.persistence = lib.mkIf (persist.users."${username}" ? persistence)
       persist.users."${username}".persistence;
 

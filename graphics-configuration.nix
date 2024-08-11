@@ -34,4 +34,6 @@
     nvidiaBusId = "PCI:1:0:0";
   };
 
+  hardware.opentabletdriver.enable = true;
+
 }

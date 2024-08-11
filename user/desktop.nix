@@ -290,7 +290,7 @@ in
       # some more common keybinds.
       "C-A-Delete" = "shutdown now";
       "Print" = "${lib.getExe scrot} --select --file ~/screenshot.png";
-      "W-f" = "${lib.getExe' librewolf "librewolf"}";
+      "W-f" = "${lib.getExe librewolf-unfocus}";
       "W-l" = "${lib.getExe' lightlocker "light-locker-command"} --lock";
       "W-p" = "${lib.getExe autorandr} --change";
       "W-t" = "${lib.getExe' xfce.xfce4-terminal "xfce4-terminal"}";

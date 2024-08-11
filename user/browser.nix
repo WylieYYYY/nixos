@@ -170,7 +170,7 @@ in
   xdg.configFile."tridactyl/tridactylrc".text = let
     mouseAllowedRegex = lib.concatStringsSep "|" (builtins.map lib.escapeRegex
         ((persist.mouseAllowedDomains or [ ]) ++ [
-          "0.0.0.0" "127.0.0.1" "localhost"
+          "0\\.0\\.0\\.0" "127\\.0\\.0\\.1" "localhost"
         ]));
   in ''
     bind m mouse_mode
@@ -178,9 +178,9 @@ in
     colors dark
 
     autocmd DocLoad ^https?://(?!(?:${mouseAllowedRegex})(?:[:/]|$)) no_mouse_mode
-    autocmd DocLoad ^https://search.nixos.org/ unfocus
-    autocmd UriChange ^https://search.nixos.org/ unfocus
-    autocmd DocLoad ^https://www.twitch.tv/ hint -c main .simplebar-scroll-content
+    autocmd DocLoad ^https://search\.nixos\.org/ unfocus
+    autocmd UriChange ^https://search\.nixos\.org/ unfocus
+    autocmd DocLoad ^https://www\.twitch\.tv/ hint -c main .simplebar-scroll-content
   '';
 
 }
