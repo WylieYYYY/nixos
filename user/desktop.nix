@@ -190,6 +190,9 @@ in
     };
   };
 
+  # Uses Pipewire native volume mixer.
+  dconf.settings."apps/volctl".mixer-command = lib.getExe pkgs.pwvucontrol;
+
   # Uses big pen icon and highlighting for higher visibility.
   # PDF template changed to get rid of the "_annotated" suffix.
   xdg.configFile."xournalpp/settings.xml".source = xmlAttrset.createOrdered rec {

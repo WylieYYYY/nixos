@@ -111,6 +111,7 @@ in
   programs.firefox = rec {
     enable = true;
     package = pkgs.librewolf;
+    disclaimerAppName = "LibreWolf";
     firefoxConfigPath = ".librewolf";
     profilesPath = firefoxConfigPath;
 
@@ -150,6 +151,12 @@ in
         "extensions.webextensions.uuids" = extensionUuidMap;
         "security.OCSP.enabled" = 0;
         "xpinstall.signatures.required" = false;
+      };
+      search = rec {
+        force = true;
+        default = "DuckDuckGo";
+        privateDefault = default;
+        order = [ default "Google" ];
       };
       inherit extensions;
     };

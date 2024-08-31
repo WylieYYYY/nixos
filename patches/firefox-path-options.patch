@@ -1,5 +1,5 @@
 diff --git a/modules/programs/firefox.nix b/modules/programs/firefox.nix
-index 1370d4c2..2142e112 100644
+index 1370d4c2..eda868f3 100644
 --- a/modules/programs/firefox.nix
 +++ b/modules/programs/firefox.nix
 @@ -10,21 +10,10 @@ let
@@ -26,7 +26,22 @@ index 1370d4c2..2142e112 100644
  
    nativeMessagingHostsJoined = pkgs.symlinkJoin {
      name = "ff_native-messaging-hosts";
-@@ -288,6 +277,45 @@ in {
+@@ -262,6 +251,14 @@ in {
+         '';
+       };
+ 
++      disclaimerAppName = mkOption {
++        type = types.str;
++        default = "Firefox";
++        description = ''
++          App name used in the disclaimer required for setting the default search engine.
++        '';
++      };
++
+       nativeMessagingHosts = mkOption {
+         type = types.listOf types.package;
+         default = [ ];
+@@ -288,6 +285,45 @@ in {
          };
        };
  
@@ -72,7 +87,7 @@ index 1370d4c2..2142e112 100644
        profiles = mkOption {
          type = types.attrsOf (types.submodule ({ config, name, ... }: {
            options = {
-@@ -753,7 +781,7 @@ in {
+@@ -753,7 +789,7 @@ in {
      home.packages = lib.optional (cfg.finalPackage != null) cfg.finalPackage;
  
      home.file = mkMerge ([{
@@ -81,7 +96,7 @@ index 1370d4c2..2142e112 100644
          mkIf (cfg.profiles != { }) { text = profilesIni; };
  
        "${nativeMessagingHostsPath}" = {
-@@ -762,27 +790,27 @@ in {
+@@ -762,27 +798,27 @@ in {
          recursive = true;
        };
      }] ++ flip mapAttrsToList cfg.profiles (_: profile: {
@@ -115,7 +130,23 @@ index 1370d4c2..2142e112 100644
          (profile.search.default != null || profile.search.privateDefault != null
            || profile.search.order != [ ] || profile.search.engines != { }) {
              force = profile.search.force;
-@@ -929,7 +957,7 @@ in {
+@@ -905,13 +941,13 @@ in {
+                 + "to accordingly.";
+ 
+               salt = if profile.search.default != null then
+-                profile.path + profile.search.default + disclaimer "Firefox"
++                profile.path + profile.search.default + disclaimer cfg.disclaimerAppName
+               else
+                 null;
+ 
+               privateSalt = if profile.search.privateDefault != null then
+                 profile.path + profile.search.privateDefault
+-                + disclaimer "Firefox"
++                + disclaimer cfg.disclaimerAppName
+               else
+                 null;
+             in pkgs.runCommand "search.json.mozlz4" {
+@@ -929,7 +965,7 @@ in {
              '';
            };
  
