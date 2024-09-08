@@ -43,6 +43,11 @@ args@{ persist, username, config, lib, pkgs, ... }:
 
   nixpkgs.overlays = [ persist.extraOverlayFunc ];
 
+  home.packages = with pkgs; [ curl gocryptfs sshfs ];
+
+  # Makes a convenient mount point for FUSE.
+  home.file."mnt/.keep".text = "";
+
   home.persistence = lib.mkIf (persist.users."${username}" ? persistence)
       persist.users."${username}".persistence;
 

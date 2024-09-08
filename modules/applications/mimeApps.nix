@@ -58,12 +58,17 @@ in
       };
     }) cfg.customMimeTypes);
 
-    xdg.mimeApps = {
+    xdg.mimeApps = rec {
       enable = true;
-      defaultApplications = builtins.mapAttrs (name: value:
-        if isPackage value && value ? pname
-        then "${value.pname}.desktop"
-        else "${value.name}.desktop"
+      associations.added = defaultApplications;
+      defaultApplications = let
+        desktopFilename = name: (
+          if lib.hasSuffix ".desktop" name
+          then name
+          else "${name}.desktop"
+        );
+      in builtins.mapAttrs (name: value:
+        desktopFilename (value.pname or value.name)
       ) cfg.defaultApplications;
     };
   };
