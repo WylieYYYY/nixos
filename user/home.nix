@@ -41,7 +41,7 @@ args@{ persist, username, config, lib, pkgs, ... }:
     patchedExpressions = import ./../modules/system/patchedExpressions.nix;
   in builtins.toString (pkgs.callPackage patchedExpressions.nur-rycee { });
 
-  nixpkgs.overlays = [ persist.extraOverlayFunc ];
+  nixpkgs.overlays = lib.optionals (persist ? extraOverlayFunc) persist.extraOverlayFunc;
 
   home.packages = with pkgs; [ curl gocryptfs sshfs ];
 

@@ -38,8 +38,9 @@
   };
 
   # Excludes domains that are not compatible with DNSSEC.
-  environment.etc."dnssec-trust-anchors.d/default.negative".text =
-      lib.mkIf (persist ? dnssecExcludes) (lib.concatStringsSep "\n" persist.dnssecExcludes);
+  environment.etc."dnssec-trust-anchors.d/default.negative" = lib.mkIf (persist ? dnssecExcludes) {
+    text = lib.concatStringsSep "\n" persist.dnssecExcludes;
+  };
 
   # Firewall with additional entries for offline application isolation.
   networking.firewall.checkReversePath = false;

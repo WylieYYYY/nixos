@@ -17,8 +17,9 @@
   };
 
   # Persists the direnv allow files for impermanence.
-  xdg.dataFile."direnv/allow".source = lib.mkIf (persist ? direnvPersistPath)
-      (config.lib.file.mkOutOfStoreSymlink persist.direnvPersistPath);
+  xdg.dataFile."direnv/allow" = lib.mkIf (persist ? direnvPersistPath) {
+    source = config.lib.file.mkOutOfStoreSymlink persist.direnvPersistPath;
+  };
 
   programs.fish = {
     enable = true;

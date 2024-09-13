@@ -18,9 +18,9 @@ let
   home-manager-nix = (import <nixpkgs> { }).callPackage
       (import ./modules/system/patchedExpressions.nix).home-manager { };
 
-  mainUsernames = lib.optionals (persist ? users) builtins.attrNames persist.users;
+  mainUsernames = lib.optionals (persist ? users) (builtins.attrNames persist.users);
   isolatedUsernames = lib.optionals (persist ? isolatedEntries)
-      builtins.attrNames (persist.isolatedEntries { inherit lib pkgs; });
+      (builtins.attrNames (persist.isolatedEntries { inherit lib pkgs; }));
 in
 
 {

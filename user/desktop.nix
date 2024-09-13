@@ -96,6 +96,7 @@ in
     ./../modules/applications/mimeApps.nix
     ./../modules/applications/nitrogen.nix
     ./../modules/applications/openbox.nix
+    ./../modules/system/writableHomeFile.nix
     (import ./devtools.nix (args // { inherit persist; }))
     (import ./rofi.nix (args // { inherit appMenu persist; }))
   ]
