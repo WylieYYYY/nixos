@@ -1,29 +1,6 @@
-args@{ persist, username, config, lib, pkgs, ... }:
+{ username, config, lib, pkgs, ... }:
 
 # Main user's `home.nix` for home manager.
-# Parameters:
-# - persist: Attribute set of persisting settings.
-#   - allowedUnfreePackages?: Some unfree package names to allow and isolate.
-#   - bluemanNoNotification?: whether to suppress Blueman notifications (defaults to true).
-#   - browserPersistPath?: Persisting directory for browser.
-#     - expects: extensions.json, extension-settings.json
-#   - containerSuffixes?: Attribute set of container names to their suffixes.
-#     - Work?: Suffixes for the work container.
-#   - direnvPersistPath?: Persisting directory for direnv.
-#   - gitUserEmail?: Default email associated with Git.
-#   - gitUserName?: Default user name associated with Git.
-#   - hostname?: Display name for the top-left corner of the desktop.
-#   - isolatedEntries?: Function yielding an attribute set of user names to isolated menu entries.
-#     - expects: { lib, pkgs, ... }:
-#         { <username> = { name = <application name>; value = <command>; }, ... }
-#   - kdbxPath?: Path to the Keepass database for KeepassXC and Keepmenu.
-#   - mouseAllowedDomains?: Domains that are excluded from Tridactyl's no mouse mode.
-#   - useCubicleExtension?: Whether the browser persisting directory has a build of Cubicle to link.
-#   - users?: Attribute set of main usernames to user specific configurations.
-#     - <username>?: The username.
-#       - persistence?: Attribute set to be passed to the impermanence module.
-#   - wallpaperPath?: Path to a wallpaper file for Nitrogen.
-# - username: Username of the main user.
 
 {
 
@@ -32,8 +9,8 @@ args@{ persist, username, config, lib, pkgs, ... }:
 
   imports = [
     ./../modules/overlay.nix
-    (import ./desktop.nix (args // { inherit persist; }))
-    (import ./annoyance.nix (args // { inherit persist; }))
+    ./annoyance.nix
+    ./desktop.nix
   ];
 
   # Caches patched NUR Nix expression to prevent refetch.
@@ -41,15 +18,12 @@ args@{ persist, username, config, lib, pkgs, ... }:
     patchedExpressions = import ./../modules/system/patchedExpressions.nix;
   in builtins.toString (pkgs.callPackage patchedExpressions.nur-rycee { });
 
-  nixpkgs.overlays = lib.optional (persist ? extraOverlayFunc) persist.extraOverlayFunc;
-
   home.packages = with pkgs; [ curl gocryptfs sshfs ];
 
   # Makes a convenient mount point for FUSE.
   home.file."mnt/.keep".text = "";
 
-  home.persistence = lib.mkIf (persist.users."${username}" ? persistence)
-      persist.users."${username}".persistence;
+  home.persistence = config.customization.persistence.other;
 
   services.autorandr = {
     enable = true;
@@ -58,7 +32,7 @@ args@{ persist, username, config, lib, pkgs, ... }:
 
   programs.autorandr = {
     enable = true;
-    profiles = lib.mkIf (persist ? autorandrProfiles) (persist.autorandrProfiles args);
+    profiles = config.customization.autorandrProfiles { inherit lib pkgs; };
     hooks.preswitch = {
       "reset-warmth" = "${lib.getExe pkgs.redshift} -x";
     };

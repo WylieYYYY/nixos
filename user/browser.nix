@@ -1,14 +1,6 @@
-{ persist, config, lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 # Adds browser and extensions.
-# Parameters:
-# - persist: Attribute set of persisting settings.
-#   - browserPersistPath: Persisting directory for browser.
-#     - expects: extensions.json, extension-settings.json
-#   - containerSuffixes?: Attribute set of container names to their suffixes.
-#     - Work?: Suffixes for the work container.
-#   - mouseAllowedDomains?: Domains that are excluded from Tridactyl's no mouse mode.
-#   - useCubicleExtension?: Whether the persisting directory has a build of Cubicle to link.
 
 let
   cfg = config.programs.firefox;
@@ -24,7 +16,7 @@ let
     nur.ublock-origin
     pkgs.firefox-addons.seventv
   ];
-  mutableExtensions = lib.optional (persist.useCubicleExtension or false)
+  mutableExtensions = lib.optional (config.customization.useCubicleExtension)
       pkgs.firefox-addons.cubicle;
 
   # Predicatable UUIDs for extensions, allows for setting new tab page.
@@ -59,11 +51,13 @@ in
     lib.nameValuePair "${cfg.profilesPath}/${profileName}/${name}"
   ) {
     # Persists extension registry to suppress new installation warning.
-    "extensions.json".source = config.lib.file.mkOutOfStoreSymlink
-        "${persist.browserPersistPath}/extensions.json";
+    "extensions.json" = lib.mkIf (config.customization.persistence.browser != null) {
+      source = config.lib.file.mkOutOfStoreSymlink
+          "${config.customization.persistence.browser}/extensions.json";
+    };
     # Symlink for building and reloading Cubicle extension.
-    "extensions/${cubicle.meta.addonId}.xpi" = lib.mkIf (persist.useCubicleExtension or false) {
-      source = config.lib.file.mkOutOfStoreSymlink "${persist.browserPersistPath}/cubicle.xpi";
+    "extensions/${cubicle.meta.addonId}.xpi" = lib.mkIf (config.customization.useCubicleExtension) {
+      source = config.lib.file.mkOutOfStoreSymlink "${config.customization.persistence.browser}/cubicle.xpi";
     };
     # Stops 7TV popup everytime the website is launched.
     "browser-extension-data/${seventv.meta.addonId}/storage.js".text = builtins.toJSON {
@@ -105,8 +99,10 @@ in
 
   # Suppresses browser warning for new tab change.
   # If this file is not writable, the browser will replace it with a reset file.
-  home.writableFile."${cfg.profilesPath}/${profileName}/extension-settings.json".source =
-      "${persist.browserPersistPath}/extension-settings.json";
+  home.writableFile."${cfg.profilesPath}/${profileName}/extension-settings.json" =
+      lib.mkIf (config.customization.persistence.browser != null) {
+    source = "${config.customization.persistence.browser}/extension-settings.json";
+  };
 
   programs.firefox = rec {
     enable = true;
@@ -162,21 +158,21 @@ in
     };
   };
 
-  programs.cubicle = lib.mkIf (persist ? containerSuffixes) {
+  programs.cubicle = lib.mkIf (config.customization.useCubicleExtension) {
     enable = true;
     inherit profileName;
 
-    containers."Work" = lib.mkIf (persist.containerSuffixes ? Work) {
+    containers."Work" = lib.mkIf (config.customization.containerSuffixes ? Work) {
       color = "blue";
       icon = "briefcase";
-      suffixes = persist.containerSuffixes.Work;
+      suffixes = config.customization.containerSuffixes.Work;
     };
   };
 
   # Tridactyl configurations for cursorless browsing.
   xdg.configFile."tridactyl/tridactylrc".text = let
     mouseAllowedRegex = lib.concatStringsSep "|" (builtins.map lib.escapeRegex
-        ((persist.mouseAllowedDomains or [ ]) ++ [
+        ((config.customization.mouseAllowedDomains or [ ]) ++ [
           "0\\.0\\.0\\.0" "127\\.0\\.0\\.1" "localhost"
         ]));
   in ''

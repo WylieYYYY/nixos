@@ -1,12 +1,10 @@
-{ appMenu, persist, lib, pkgs, ... }:
+{ appMenu, config, lib, pkgs, ... }:
 
 # Adds Rofi, Keepmenu, and related applications.
 # Creates an application in Rofi using the same structure as the Openbox configuration.
 # - Patches `Keepmenu` to allow adaptive autotyping by the fields available.
 # Parameters:
 # - appMenu: Openbox pipemenu configuration.
-# - persist: Attribute set of persisting settings.
-#   - kdbxPath?: Path to the Keepass database for Keepmenu.
 
 let
   isPackage = value: lib.isDerivation value || lib.isStorePath value;
@@ -23,7 +21,7 @@ let
     else [(lib.nameValuePair (lib.escapeShellArg entry.name) entry.value)];
 
   # Flattens the given menu and prepends a Keepmenu entry.
-  flattenedMenu = lib.optional (persist ? kdbxPath) (
+  flattenedMenu = lib.optional (config.customization.persistence.kdbx!= null) (
     lib.nameValuePair (lib.escapeShellArg "Fill Password") (lib.getExe' pkgs.keepmenu "keepmenu")
   ) ++ (lib.flatten (builtins.map flattenEntryRecursive appMenu));
 
@@ -65,15 +63,15 @@ in
   })];
 
   # Extra Xdotool dependency for Keepmenu autotyping.
-  home.packages = lib.mkIf (persist ? kdbxPath) [ pkgs.xdotool ];
+  home.packages = lib.mkIf (config.customization.persistence.kdbx != null) [ pkgs.xdotool ];
 
   # Registers Keepass database, Rofi, and adaptive autotype for Keepmenu.
-  xdg.configFile."keepmenu/config.ini" = lib.mkIf (persist ? kdbxPath) {
+  xdg.configFile."keepmenu/config.ini" = lib.mkIf (config.customization.persistence.kdbx != null) {
     text = lib.generators.toINI { } {
       dmenu.dmenu_command = "${lib.getExe pkgs.rofi} -dmenu -i";
       dmenu_passphrase.obscure = "True";
       database = {
-        database_1 = builtins.toString persist.kdbxPath;
+        database_1 = config.customization.persistence.kdbx;
         autotype_default = "{AT:ADAPTIVE}";
         pw_cache_period_min = 60;
         type_library = "xdotool";

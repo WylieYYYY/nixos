@@ -19,13 +19,10 @@ let
   #   - syncthingIds?: Attribute set of device names to Syncthing IDs.
   #   - syncthingDir?: Folder to be shared to all devices provided.
   #   - swapDevicePartUuid?: Swap partition's UUID for encryption.
-  #   - users?: Attribute set of main usernames to user specific configurations.
-  #     - <username>?: The username.
-  #       - hashedPassword: Hashed password in the shadow format.
-  #       - homeNixPath: Path to the user's `home.nix` configuration file.
-  #   - ...?: Additional list of options found in `user/home.nix`.
-  persist = import ./persist.nix;
+  persist = (import (builtins.toString ./persist.nix)).customization.global;
 
+  home-manager-repo = (import <nixpkgs> { }).callPackage
+      (import ./modules/system/patchedExpressions.nix).home-manager { };
   impermanence-repo = builtins.fetchTarball {
     url = "https://github.com/nix-community/impermanence/archive/123e94200f63952639492796b8878e588a4a2851.tar.gz";
     sha256 = "07c146m0i47a0f9gajhh8h9l5ndy5744dmvbbqhvm28pnl319qmd";
@@ -45,8 +42,10 @@ in
     ./hardware-configuration.nix
     ./graphics-configuration.nix
     (import ./network-configuration.nix (args // { inherit persist; }))
-    (import ./user-configuration.nix (args // { inherit persist impermanence-repo; }))
+    (import ./user-configuration.nix (args // { inherit home-manager-repo impermanence-repo; }))
+    (import ./customization.nix (args // { inherit home-manager-repo impermanence-repo; }))
     ./modules/overlay.nix
+    (builtins.toString ./persist.nix)
   ];
 
   # Disables graphical authentication so that autotype can be used.

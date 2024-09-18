@@ -1,37 +1,22 @@
-args@{ impermanence-repo, persist, config, lib, pkgs, ... }:
+args@{ home-manager-repo, impermanence-repo, config, lib, pkgs, ... }:
 
 # Multi-user configurations with home manager.
-# Parameters:
-# - impermanence-repo: Filesystem path to the root of the impermanence module repository.
-# - persist: Attribute set of persisting settings.
-#   - isolatedEntries?: Function yielding an attribute set of user names to isolated menu entries.
-#     - expects: { lib, pkgs, ... }:
-#         { <username> = { name = <application name>; value = <command>; }, ... }
-#   - users?: Attribute set of main usernames to user specific configurations.
-#     - <username>?: The username.
-#       - hashedPassword: Hashed password in the shadow format.
-#       - homeNixPath: Path to the user's `home.nix` configuration file.
-#  - ...?: Additional list of options found in `user/home.nix`.
 
 let
-  # Imports and patches home manager for custom configuration.
-  home-manager-nix = (import <nixpkgs> { }).callPackage
-      (import ./modules/system/patchedExpressions.nix).home-manager { };
-
-  mainUsernames = lib.optionals (persist ? users) (builtins.attrNames persist.users);
-  isolatedUsernames = lib.optionals (persist ? isolatedEntries)
-      (builtins.attrNames (persist.isolatedEntries { inherit lib pkgs; }));
+  mainUsernames = builtins.attrNames config.customization.users;
+  isolatedUsernames = lib.optionals (config.customization.global ? isolatedEntries)
+      (builtins.attrNames (config.customization.global.isolatedEntries { inherit lib pkgs; }));
 in
 
 {
 
   imports = [
-    "${home-manager-nix}/nixos"
+    "${home-manager-repo}/nixos"
     ./modules/system/isolatedUsers.nix
   ];
 
   # Caches patched home manager Nix expression to prevent refetch.
-  system.extraDependencies = [ home-manager-nix ];
+  system.extraDependencies = [ home-manager-repo ];
 
   users.isolated = { inherit mainUsernames isolatedUsernames; };
 
@@ -62,7 +47,7 @@ in
   # todo: Fine tune groups and shell for each user when needed.
   users.users = lib.mkMerge (lib.imap0 (index: name: {
     "${name}" = {
-      inherit (persist.users."${name}") hashedPassword;
+      inherit (config.customization.users."${name}") hashedPassword;
       uid = 1000 + index;
       isNormalUser = true;
       extraGroups = [ "wheel" "networkmanager" "bluetooth" "syncthing" ];
@@ -82,23 +67,36 @@ in
     };
   }) mainUsernames);
 
-  # Setup home manager with impermanence module and `persist` parameter.
+  # Setup home manager with impermanence module.
   # Main users can customize paths to their `home.nix`,
   # isolated users' `home.nix` should be located at `isolated/<name>.nix`.
-  home-manager.users = lib.mkMerge (builtins.map (props: {
-    "${props.name}" = args@{ config, lib, pkgs, ... }: {
+  home-manager.users = let
+    isViaCustomization = name: builtins.hasAttr name args.config.customization.users &&
+        builtins.isAttrs args.config.customization.users."${name}";
+  in lib.mkMerge (builtins.map (props: {
+    "${props.name}" = home-args@{ config, lib, pkgs, ... }: {
       imports = [
         "${impermanence-repo}/home-manager.nix"
-        (import "${./.}/${props.path}" (args // {
-          inherit persist;
+        (import "${./.}/${props.path}" (home-args // {
           username = props.name;
         }))
-      ];
-    };
+      ] ++ lib.optional (isViaCustomization props.name) (
+        import ./user/customization.nix (home-args // {
+          inherit (args) home-manager-repo impermanence-repo;
+          bareSubmodule = false;
+        })
+      );
+    } // (
+      if isViaCustomization props.name
+      then { customization = args.config.customization.users."${props.name}"; }
+      else { }
+    );
   }) (
     (builtins.map (name: {
       inherit name;
-      path = persist.users."${name}".homeNixPath;
+      path = if isViaCustomization name
+             then "user/home.nix"
+             else config.customization.users."${name}";
     }) mainUsernames) ++
     (builtins.map (name: {
       inherit name;

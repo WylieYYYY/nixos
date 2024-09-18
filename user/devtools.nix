@@ -1,11 +1,6 @@
-{ persist, config, lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 # Adds development tools such as Git and VSCode.
-# Parameters:
-# - persist: Attribute set of persisting settings.
-#   - direnvPersistPath?: Persisting directory for direnv.
-#   - gitUserEmail?: Default email associated with Git.
-#   - gitUserName?: Default user name associated with Git.
 
 {
 
@@ -17,8 +12,8 @@
   };
 
   # Persists the direnv allow files for impermanence.
-  xdg.dataFile."direnv/allow" = lib.mkIf (persist ? direnvPersistPath) {
-    source = config.lib.file.mkOutOfStoreSymlink persist.direnvPersistPath;
+  xdg.dataFile."direnv/allow" = lib.mkIf (config.customization.persistence.direnv != null) {
+    source = config.lib.file.mkOutOfStoreSymlink config.customization.persistence.direnv;
   };
 
   programs.fish = {
@@ -68,8 +63,8 @@
 
   programs.git = {
     enable = true;
-    userEmail = lib.mkIf (persist ? gitUserEmail) persist.gitUserEmail;
-    userName = lib.mkIf (persist ? gitUserName) persist.gitUserName;
+    userEmail = config.customization.git.email;
+    userName = config.customization.git.username;
 
     aliases = {
       br = "branch";

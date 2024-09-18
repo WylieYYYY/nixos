@@ -1,24 +1,6 @@
-args@{ persist, config, lib, pkgs, ... }:
+args@{ config, lib, pkgs, ... }:
 
 # Adds desktop applications, with some MIME and keybind settings.
-# Parameters:
-# - persist: Attribute set of persisting settings.
-#   - allowedUnfreePackages?: Some unfree package names to allow and isolate.
-#   - browserPersistPath?: Persisting directory for browser.
-#     - expects: extensions.json, extension-settings.json
-#   - containerSuffixes?: Attribute set of container names to their suffixes.
-#     - Work?: Suffixes for the work container.
-#   - direnvPersistPath?: Persisting directory for direnv.
-#   - gitUserEmail?: Default email associated with Git.
-#   - gitUserName?: Default user name associated with Git.
-#   - hostname?: Display name for the top-left corner of the desktop.
-#   - isolatedEntries?: Function yielding an attribute set of user names to isolated menu entries.
-#     - expects: { lib, pkgs, ... }:
-#         { <username> = { name = <application name>; value = <command>; }, ... }
-#   - kdbxPath?: Path to the Keepass database for KeepassXC and Keepmenu.
-#   - mouseAllowedDomains?: Domains that are excluded from Tridactyl's no mouse mode.
-#   - useCubicleExtension?: Whether the browser persisting directory has a build of Cubicle to link.
-#   - wallpaperPath?: Path to a wallpaper file for Nitrogen.
 
 let
   xmlAttrset = pkgs.callPackage ./../modules/utils/xmlAttrset.nix { };
@@ -54,11 +36,11 @@ let
   appMenu = let
     entry = lib.nameValuePair;
     # generates isolated application entries to forward calls to specific users.
-    isolatedEntries = lib.optionals (persist ? isolatedEntries) (let
+    isolatedEntries = lib.optionals (config.customization.global ? isolatedEntries) (let
       userForward = userArgs: pkgs.callPackage ./../modules/system/userForward.nix userArgs;
     in lib.mapAttrsToList (name: value:
       entry value.name (userForward { user = name; command = value.value; })
-    ) (persist.isolatedEntries { inherit lib pkgs; }));
+    ) (config.customization.global.isolatedEntries { inherit lib pkgs; }));
   in with pkgs; [
     "Applications"
     (entry "Accessories" [
@@ -69,7 +51,9 @@ let
     (entry "Internet" [
       (entry "LibreWolf" librewolf-unfocus)
     ])
-  ] ++ lib.optionals (persist ? isolatedEntries) [(entry "Isolated" isolatedEntries)] ++ [
+  ] ++ lib.optionals (config.customization.global ? isolatedEntries) [
+    (entry "Isolated" isolatedEntries)
+  ] ++ [
     (entry "Multimedia" [
       (entry "Krita" (lib.getExe' krita "krita"))
       (entry "VLC" (lib.getExe' vlc "vlc"))
@@ -97,11 +81,10 @@ in
     ./../modules/applications/nitrogen.nix
     ./../modules/applications/openbox.nix
     ./../modules/system/writableHomeFile.nix
-    (import ./devtools.nix (args // { inherit persist; }))
-    (import ./rofi.nix (args // { inherit appMenu persist; }))
-  ]
-  ++ lib.optional (persist ? browserPersistPath)
-      (import ./browser.nix (args // { inherit persist; }));
+    ./browser.nix
+    ./devtools.nix
+    (import ./rofi.nix (args // { inherit appMenu; }))
+  ];
 
   # Patches for various desktop applications.
   # - Changes the window behaviour of Feh to have a better viewing experience.
@@ -127,7 +110,7 @@ in
 
   # Allows some unfree packages for isolation.
   nixpkgs.config.allowUnfreePredicate = pkg:
-    builtins.elem (lib.getName pkg) (persist.allowedUnfreePackages or [ ]);
+    builtins.elem (lib.getName pkg) (config.customization.global.allowedUnfreePackages);
 
   # Some nice icons for applications, files, and the like.
   home.file.".icons/default/index.theme".text = lib.generators.toINI { } {
@@ -153,12 +136,13 @@ in
   };
 
   # Sets default database file and dark theme.
-  home.writableFile = lib.mkIf (persist ? kdbxPath) (lib.mkMerge (builtins.map (path: {
+  home.writableFile = lib.mkIf (config.customization.persistence.kdbx != null)
+      (lib.mkMerge (builtins.map (path: {
     "${path}/keepassxc/keepassxc.ini".source = pkgs.writeText "keepass-ini" (
       lib.generators.toINI { } {
         General = rec {
           ConfigVersion = 2;
-          LastDatabases = builtins.toString persist.kdbxPath;
+          LastDatabases = config.customization.persistence.kdbx;
           LastActiveDatabases = LastDatabases;
           LastOpenedDatabases = LastDatabases;
         };
@@ -234,9 +218,9 @@ in
   };
 
   # Sets the wallpaper with a sensible zooming mode.
-  programs.nitrogen = lib.mkIf (persist ? wallpaperPath) {
+  programs.nitrogen = lib.mkIf (config.customization.persistence.wallpaper != null) {
     enable = true;
-    file = persist.wallpaperPath;
+    file = config.customization.persistence.wallpaper;
     mode = "zoomed-fill";
   };
 
@@ -312,7 +296,9 @@ in
       # sets one desktop with hostname on the top-left corner.
       desktops = {
         number."text()" = 1;
-        names.name = lib.optional (persist ? hostname) { "text()" = persist.hostname; };
+        names.name = lib.optional (config.customization.global ? hostname) {
+          "text()" = config.customization.global.hostname;
+        };
       };
       # opens some applications maximized.
       applications.application = (builtins.map (class: {

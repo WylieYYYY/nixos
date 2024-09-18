@@ -1,10 +1,7 @@
-{ persist, lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 # Collection of configurations to reduce annoyance.
 # Disables first run notifications and popups.
-# Parameters:
-# - persist: Attribute set of persisting settings.
-#   - bluemanNoNotification?: whether to suppress Blueman notifications (defaults to true).
 
 let
   xmlAttrset = pkgs.callPackage ./../modules/utils/xmlAttrset.nix { };
@@ -25,7 +22,7 @@ in
   # Suppresses connection notification,
   # annoying after the icon is patched to display connection status.
   dconf.settings."org/blueman/general" = with lib.hm.gvariant;
-  lib.mkIf (persist.bluemanNoNotification or true) {
+      lib.mkIf (config.customization.bluemanNoNotification) {
     plugin-list = mkArray type.string [ "!ConnectionNotifier" ];
   };
 
