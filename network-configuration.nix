@@ -1,18 +1,10 @@
-{ persist, lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 # Network and connectivity configurations.
-# Parameters:
-# - persist: Attribute set of persisting settings.
-#   - dns?: A list of DNS server addresses with domain fragments.
-#   - dnssecExcludes?: A list of domains to be excluded from DNSSEC.
-#   - hostname?: Host name to be registered.
-#   - isolatedOutputRules?: Additional NFTables output rules for isolated applications.
-#   - syncthingIds?: Attribute set of device names to Syncthing IDs.
-#   - syncthingDir?: Folder to be shared to all devices provided.
 
 {
 
-  networking.hostName = lib.mkIf (persist ? hostname) persist.hostname;
+  networking.hostName = config.customization.global.network.hostname;
 
   # Enables Bluetooth service.
   hardware.bluetooth.enable = true;
@@ -28,18 +20,18 @@
   };
 
   # DNS using DoT and DNSSEC.
-  networking.nameservers = lib.mkIf (persist ? dns) persist.dns;
-  services.resolved = lib.mkIf (persist ? dns) {
+  networking.nameservers = config.customization.global.network.dns;
+  services.resolved = lib.mkIf (config.customization.global.network.dns != [ ]) {
     enable = true;
     dnsovertls = "true";
     dnssec = "true";
     domains = [ "~." ];
-    fallbackDns = persist.dns;
+    fallbackDns = config.customization.global.network.dns;
   };
 
   # Excludes domains that are not compatible with DNSSEC.
-  environment.etc."dnssec-trust-anchors.d/default.negative" = lib.mkIf (persist ? dnssecExcludes) {
-    text = lib.concatStringsSep "\n" persist.dnssecExcludes;
+  environment.etc."dnssec-trust-anchors.d/default.negative" = lib.mkIf (config.customization.global.network.dnssecExcludes != [ ]) {
+    text = lib.concatStringsSep "\n" config.customization.global.network.dnssecExcludes;
   };
 
   # Firewall with additional entries for offline application isolation.
@@ -62,7 +54,7 @@
         }
         chain output {
           type filter hook output priority filter;
-          ${persist.isolationOutputRules or ""}
+          ${config.customization.global.isolated.nftOutputRules}
         }
       }
     '';
@@ -72,7 +64,7 @@
   systemd.services.syncthing.serviceConfig.UMask = "0002";
 
   # Syncthing with predefined folder shared to all devices.
-  services.syncthing = lib.mkIf (persist ? syncthingIds && persist ? syncthingDir) {
+  services.syncthing = lib.mkIf (config.customization.global.persistence.syncthing != null) {
     enable = true;
     overrideDevices = true;
     overrideFolders = true;
@@ -80,10 +72,10 @@
     settings = {
       devices = lib.mkMerge (lib.mapAttrsToList (name: value:
         { "${name}".id = value; }
-      ) persist.syncthingIds);
+      ) config.customization.global.network.syncthingIds);
       folders.sync = {
-        path = builtins.toString persist.syncthingDir;
-        devices = builtins.attrNames persist.syncthingIds;
+        path = config.customization.global.persistence.syncthing;
+        devices = builtins.attrNames config.customization.global.network.syncthingIds;
       };
     };
   };

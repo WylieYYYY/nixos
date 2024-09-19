@@ -4,8 +4,7 @@ args@{ home-manager-repo, impermanence-repo, config, lib, pkgs, ... }:
 
 let
   mainUsernames = builtins.attrNames config.customization.users;
-  isolatedUsernames = lib.optionals (config.customization.global ? isolatedEntries)
-      (builtins.attrNames (config.customization.global.isolatedEntries { inherit lib pkgs; }));
+  isolatedUsernames = builtins.attrNames (config.customization.global.isolated.entries { inherit lib pkgs; });
 in
 
 {

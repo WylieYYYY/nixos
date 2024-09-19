@@ -3,24 +3,6 @@ args@{ config, lib, pkgs, ... }:
 # Main configurations.
 
 let
-  # Attribute set of persisting settings.
-  #   - bootPath?: Path to grub boot directory.
-  #   - efiSysMountPoint?: Path to the EFI mount point, typically under `bootPath` and named `efi`.
-  #   - dmBackgroundPath?: Path to a background file for the display manager.
-  #   - dns?: A list of DNS server addresses with domain fragments.
-  #   - dnssecExcludes?: A list of domains to be excluded from DNSSEC.
-  #   - hostname?: Host name to be registered.
-  #   - isolatedEntries?: Function yielding an attribute set of user names to isolated menu entries.
-  #     - expects: { lib, pkgs, ... }:
-  #         { <username> = { name = <application name>; value = <command>; }, ... }
-  #   - isolatedOutputRules?: Additional NFTables output rules for isolated applications.
-  #   - machineStateRoot?: Persistence directory for machine-specific states such as authentication.
-  #   - persistRoot?: Persistence directory for static system user data.
-  #   - syncthingIds?: Attribute set of device names to Syncthing IDs.
-  #   - syncthingDir?: Folder to be shared to all devices provided.
-  #   - swapDevicePartUuid?: Swap partition's UUID for encryption.
-  persist = (import (builtins.toString ./persist.nix)).customization.global;
-
   home-manager-repo = (import <nixpkgs> { }).callPackage
       (import ./modules/system/patchedExpressions.nix).home-manager { };
   impermanence-repo = builtins.fetchTarball {
@@ -41,20 +23,22 @@ in
     "${impermanence-repo}/nixos.nix"
     ./hardware-configuration.nix
     ./graphics-configuration.nix
-    (import ./network-configuration.nix (args // { inherit persist; }))
+    ./network-configuration.nix
     (import ./user-configuration.nix (args // { inherit home-manager-repo impermanence-repo; }))
     (import ./customization.nix (args // { inherit home-manager-repo impermanence-repo; }))
     ./modules/overlay.nix
-    (builtins.toString ./persist.nix)
+    ./persist.nix
   ];
 
   # Disables graphical authentication so that autotype can be used.
   programs.ssh.enableAskPassword = false;
 
-  boot.loader = lib.mkIf (persist ? bootPath && persist ? efiSysMountPoint) {
+  boot.loader = let
+    persistence = config.customization.global.persistence.boot;
+  in lib.mkIf (persistence.grub != null && persistence.efi != null) {
     efi = {
       canTouchEfiVariables = true;
-      efiSysMountPoint = builtins.toString persist.efiSysMountPoint;
+      efiSysMountPoint = persistence.efi;
     };
     grub = {
       efiSupport = true;
@@ -62,8 +46,8 @@ in
 
       mirroredBoots = [{
         devices = [ "nodev" ];
-        path = builtins.toString persist.bootPath;
-        efiSysMountPoint = builtins.toString persist.efiSysMountPoint;
+        path = persistence.grub;
+        efiSysMountPoint = persistence.efi;
       }];
 
       theme = pkgs.callPackage ./modules/applications/pkgs/distro-grub-themes.nix { };
@@ -72,8 +56,8 @@ in
   };
 
   # Specifies swap device to be encrypted.
-  swapDevices = lib.mkIf (persist ? swapDevicePartUuid) [{
-    device = "/dev/disk/by-partuuid/${persist.swapDevicePartUuid}";
+  swapDevices = lib.mkIf (config.customization.global.swapDevicePartUuid != null) [{
+    device = "/dev/disk/by-partuuid/${config.customization.global.swapDevicePartUuid}";
     randomEncryption.enable = true;
   }];
 
@@ -83,8 +67,8 @@ in
 
   environment.persistence = lib.mkMerge [
     # Persistence for static system user data.
-    (lib.mkIf (persist ? persistRoot) {
-      "${builtins.toString persist.persistRoot}" = {
+    (lib.mkIf (config.customization.global.persistence.root != null) {
+      "${config.customization.global.persistence.root}" = {
         hideMounts = true;
         directories = [
           "/etc/nixos"
@@ -93,8 +77,8 @@ in
       };
     })
     # Persistence for machine-specific states such as authentication.
-    (lib.mkIf (persist ? machineStateRoot) {
-      "${builtins.toString persist.machineStateRoot}" = {
+    (lib.mkIf (config.customization.global.persistence.machineState != null) {
+      "${config.customization.global.persistence.machineState}" = {
         hideMounts = true;
         directories = [
           "/etc/NetworkManager/system-connections"
@@ -141,8 +125,8 @@ in
     indicators = [ "~host" "~spacer" "~clock" "~spacer" "~power" ];
     extraConfig = ''
       position=10%,start 50%,center
-    '' + lib.optionalString (persist ? dmBackgroundPath) ''
-      background=${builtins.toString persist.dmBackgroundPath}
+    '' + lib.optionalString (config.customization.global.persistence.wallpaper != null) ''
+      background=${config.customization.global.persistence.wallpaper}
     '';
   };
 

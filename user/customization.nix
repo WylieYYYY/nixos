@@ -51,11 +51,6 @@ let
         type = lib.types.str;
         description = "Hashed password for the user.";
       };
-      allowedUnfreePackages = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        default = [ ];
-        description = "Unfree package names to allow.";
-      };
       autorandrProfiles = let
         autorandrModule = pkgs.callPackage "${home-manager-repo}/modules/programs/autorandr.nix" { };
       in lib.mkOption {
