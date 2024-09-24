@@ -41,6 +41,7 @@ in
       efiSysMountPoint = persistence.efi;
     };
     grub = {
+      default = "saved";
       efiSupport = true;
       useOSProber = true;
 
@@ -50,7 +51,13 @@ in
         efiSysMountPoint = persistence.efi;
       }];
 
-      theme = pkgs.callPackage ./modules/applications/pkgs/distro-grub-themes.nix { };
+      extraEntries = ''
+        menuentry 'UEFI Firmware Settings' --class 'efi' {
+          fwsetup
+        }
+      '';
+
+      theme = pkgs.distro-grub-themes;
       splashImage = null;
     };
   };

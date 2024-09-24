@@ -147,6 +147,10 @@ in
         "extensions.webextensions.uuids" = extensionUuidMap;
         "security.OCSP.enabled" = 0;
         "xpinstall.signatures.required" = false;
+
+        "places.history.enabled" = false;
+        "privacy.clearOnShutdown_v2.historyFormDataAndDownloads" = true;
+        "privacy.clearOnShutdown_v2.siteSettings" = true;
       };
       search = rec {
         force = true;

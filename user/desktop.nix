@@ -239,6 +239,7 @@ in
       ${lib.getExe' networkmanagerapplet "nm-applet"} &
       ${lib.getExe' blueman "blueman-applet"} &
       { sleep 2; ${lib.getExe volctl} & }
+      ${lib.getExe caffeine-ng} &
       ${lib.getExe' lightlocker "light-locker"} &
     '';
     # use the menu expression as-is, easy.
@@ -296,9 +297,9 @@ in
       # sets one desktop with hostname on the top-left corner.
       desktops = {
         number."text()" = 1;
-        names.name = lib.optional (config.customization.global ? hostname) {
-          "text()" = config.customization.global.hostname;
-        };
+        names.name = [{
+          "text()" = config.customization.global.network.hostname;
+        }];
       };
       # opens some applications maximized.
       applications.application = (builtins.map (class: {
