@@ -22,4 +22,6 @@ buildNpmPackage rec {
     wrapProgram $out/bin/gitlab-ci-local --set PATH \
         ${lib.makeBinPath (with pkgs; [ bash coreutils docker gawk git rsync ])}
   '';
+
+  meta.mainProgram = pname;
 }

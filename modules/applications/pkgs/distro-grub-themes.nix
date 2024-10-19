@@ -9,6 +9,6 @@ pkgs.srcOnly rec {
   src = fetchzip {
     url = "https://github.com/ahmedmoselhi/distro-grub-themes/releases/download/v${version}/nixos.tar";
     sha256 = "KQAXNK6sWnUVwOvYzVfolYlEtzFobL2wmDvO8iESUYE=";
-    stripRoot=false;
+    stripRoot = false;
   };
 }

@@ -14,6 +14,6 @@ stdenv.mkDerivation rec {
 
   installPhase = ''
     install --mode 444 -D --target-directory $out/share/fonts/opentype/noto-cjk \
-      Sans/Mono/*.otf
+        Sans/Mono/*.otf
   '';
 }
