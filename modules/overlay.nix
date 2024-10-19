@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ config, lib, ... }:
 
 # Applications to be added and used as an overlay.
 # todo: Put expressions and extension bundles here.
@@ -13,13 +13,14 @@ let
     noto-cjk-mono                    = ./applications/pkgs/noto-cjk-mono.nix;
     nur.repos.rycee                  = { pkgs, ... }: pkgs.callPackage "${pkgs.callPackage nur { }}" { };
     shellfront                       = ./applications/pkgs/shellfront.nix;
+    piptube                          = ./applications/pkgs/piptube.nix;
   };
 in
 
 {
   config.nixpkgs.overlays = [
     (final: prev: prev // (lib.mapAttrsRecursive (_: value:
-      prev.callPackage value { }
+      prev.callPackage value { inherit config; }
     ) applications))
     (final: prev: {
       libadwaita = prev.libadwaita.overrideAttrs (old: {

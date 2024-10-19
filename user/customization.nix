@@ -41,6 +41,7 @@ let
       browser = "Directory for persisting extensions.json, extension-settings.json.";
       direnv = "Directory for persisting Direnv allow records.";
       kdbx = "Default Keepass file for password managers' quick access.";
+      piptube = "PiPTube JAR file.";
       wallpaper = "Wallpaper image file.";
     }) // { inherit other; });
   };

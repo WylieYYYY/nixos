@@ -48,9 +48,11 @@ let
       (entry "Mousepad" (lib.getExe' xfce.mousepad "mousepad"))
       (entry "Password Manager" (lib.getExe' keepassxc "keepassxc"))
     ])
-    (entry "Internet" [
+    (entry "Internet" ([
       (entry "LibreWolf" librewolf-unfocus)
-    ])
+    ] ++ lib.optionals (config.customization.persistence.piptube != null) [
+      (entry "PiPTube" (lib.getExe piptube))
+    ]))
   ] ++ lib.optionals (config.customization.global ? isolatedEntries) [
     (entry "Isolated" isolatedEntries)
   ] ++ [
