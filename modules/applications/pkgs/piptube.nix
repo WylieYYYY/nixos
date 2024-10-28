@@ -1,4 +1,4 @@
-{ config, lib, pkgs, stdenv, fetchzip, ...}:
+{ config, lib, pkgs, stdenv, ...}:
 
 # Picture-in-picture streaming client with integrated controls.
 

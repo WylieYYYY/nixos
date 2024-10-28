@@ -30,6 +30,9 @@ in
     ./persist.nix
   ];
 
+  nix.settings.trusted-public-keys = config.customization.global.trustedPublicKeys;
+  nix.settings.trusted-substituters = config.customization.global.trustedSubstituters;
+
   # Disables graphical authentication so that autotype can be used.
   programs.ssh.enableAskPassword = false;
 

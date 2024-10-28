@@ -48,6 +48,12 @@ in
     };
   };
 
+  # Trusted substituters and public keys for the system will be trusted by users as well.
+  xdg.dataFile."nix/trusted-settings.json".text = builtins.toJSON {
+    extra-trusted-public-keys."${lib.concatStringsSep " " config.customization.global.trustedPublicKeys}" = true;
+    extra-substituters."${lib.concatStringsSep " " config.customization.global.trustedSubstituters}" = true;
+  };
+
   # Stops VLC from asking for network metadata access.
   # Don't need metadata for media, and do not resize when the video changes.
   xdg.configFile."vlc/vlcrc".text = lib.generators.toINI { } {

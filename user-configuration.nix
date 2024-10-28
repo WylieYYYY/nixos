@@ -85,11 +85,9 @@ in
           bareSubmodule = false;
         })
       );
-    } // (
-      if isViaCustomization props.name
-      then { customization = args.config.customization.users."${props.name}"; }
-      else { }
-    );
+    } // (lib.optionalAttrs (isViaCustomization props.name) {
+      customization = args.config.customization.users."${props.name}";
+    });
   }) (
     (builtins.map (name: {
       inherit name;

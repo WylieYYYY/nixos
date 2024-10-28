@@ -103,6 +103,16 @@ let
         default = null;
         description = "Swap partition's UUID for encryption.";
       };
+      trustedPublicKeys = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ ];
+        description = "List of public keys used to sign binary caches.";
+      };
+      trustedSubstituters = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ ];
+        description = "List of binary cache URLs that non-root users can use.";
+      };
     };
   };
 in
