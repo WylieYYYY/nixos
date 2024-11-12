@@ -21,7 +21,7 @@ let
     else [(lib.nameValuePair (lib.escapeShellArg entry.name) entry.value)];
 
   # Flattens the given menu and prepends a Keepmenu entry.
-  flattenedMenu = lib.optional (config.customization.persistence.kdbx!= null) (
+  flattenedMenu = lib.optional (config.customization.persistence.kdbx != null) (
     lib.nameValuePair (lib.escapeShellArg "Fill Password") (lib.getExe' pkgs.keepmenu "keepmenu")
   ) ++ (lib.flatten (builtins.map flattenEntryRecursive appMenu));
 

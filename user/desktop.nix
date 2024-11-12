@@ -36,11 +36,11 @@ let
   appMenu = let
     entry = lib.nameValuePair;
     # generates isolated application entries to forward calls to specific users.
-    isolatedEntries = lib.optionals (config.customization.global ? isolatedEntries) (let
+    isolatedEntries = let
       userForward = userArgs: pkgs.callPackage ./../modules/system/userForward.nix userArgs;
     in lib.mapAttrsToList (name: value:
       entry value.name (userForward { user = name; command = value.value; })
-    ) (config.customization.global.isolatedEntries { inherit lib pkgs; }));
+    ) (config.customization.global.isolated.entries { inherit lib pkgs; });
   in with pkgs; [
     "Applications"
     (entry "Accessories" [
@@ -53,7 +53,7 @@ let
     ] ++ lib.optionals (config.customization.persistence.piptube != null) [
       (entry "PiPTube" (lib.getExe piptube))
     ]))
-  ] ++ lib.optionals (config.customization.global ? isolatedEntries) [
+  ] ++ lib.optionals (isolatedEntries != [ ]) [
     (entry "Isolated" isolatedEntries)
   ] ++ [
     (entry "Multimedia" [

@@ -82,10 +82,10 @@ let
         readOnly = true;
         description = "Mirror of the global customization for accessing within Home Manager configuration.";
       };
-      mouseAllowedDomains = lib.mkOption {
+      mouseAllowedDomainRegexes = lib.mkOption {
         type = lib.types.listOf lib.types.str;
         default = [ ];
-        description = "Domains that are excluded from Tridactyl's no mouse mode.";
+        description = "Domain regular expressions that are excluded from Tridactyl's no mouse mode.";
       };
       useCubicleExtension = lib.mkOption {
         type = lib.types.bool;
