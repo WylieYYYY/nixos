@@ -6,7 +6,7 @@ let
   cfg = config.programs.cubicle;
 
   cubicle = pkgs.callPackage ./extensions/firefox-cubicle.nix { };
-  dataPath = "${config.programs.firefox.profilesPath}/${cfg.profileName}/browser-extension-data";
+  dataPath = "${config.programs.librewolf.configPath}/${cfg.profileName}/browser-extension-data";
 
   # Options for containers.
   containerModule = lib.types.submodule {

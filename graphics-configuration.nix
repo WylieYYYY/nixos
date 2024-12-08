@@ -23,10 +23,9 @@
   services.xserver.videoDrivers = [ "modesetting" "intel" "nvidia" ];
   services.xserver.dpi = 96;
 
-  hardware.opengl = {
+  hardware.graphics = {
     enable = true;
-    driSupport = true;
-    driSupport32Bit = true;
+    enable32Bit = true;
   };
 
   hardware.nvidia = {

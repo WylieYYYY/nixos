@@ -33,6 +33,13 @@ in
   nix.settings.trusted-public-keys = config.customization.global.trustedPublicKeys;
   nix.settings.trusted-substituters = config.customization.global.trustedSubstituters;
 
+  # Required for OpenTabletDriver.
+  nixpkgs.config.permittedInsecurePackages = [
+    "dotnet-runtime-6.0.36"
+    "dotnet-sdk-6.0.428"
+    "dotnet-sdk-wrapped-6.0.428"
+  ];
+
   # Disables graphical authentication so that autotype can be used.
   programs.ssh.enableAskPassword = false;
 
@@ -99,7 +106,6 @@ in
           "/var/lib/systemd/coredump"
           "/var/log"
         ];
-        files = [ "/etc/machine-id" ];
       };
     })
   ];
@@ -108,7 +114,8 @@ in
   services.xserver.xkb.layout = "us";
   i18n.defaultLocale = "en_US.UTF-8";
   i18n.inputMethod = {
-    enabled = "ibus";
+    enable = true;
+    type = "ibus";
     ibus.engines = [ pkgs.ibus-engines.rime ];
   };
 

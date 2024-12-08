@@ -10,7 +10,7 @@ let
   librewolf-unfocus = let
     xdotool = lib.getExe pkgs.xdotool;
   in pkgs.writeShellScriptBin "librewolf-unfocus" ''
-    ${lib.getExe' pkgs.librewolf "librewolf"} $@ &
+    ${lib.getExe config.programs.librewolf.finalPackage} $@ &
     while ${xdotool} getwindowfocus getwindowname | grep --invert-match 'LibreWolf'; do
       sleep 0.1s
     done
@@ -44,7 +44,7 @@ let
   in with pkgs; [
     "Applications"
     (entry "Accessories" [
-      (entry "Archive Manager" gnome.file-roller)
+      (entry "Archive Manager" file-roller)
       (entry "Mousepad" (lib.getExe' xfce.mousepad "mousepad"))
       (entry "Password Manager" (lib.getExe' keepassxc "keepassxc"))
     ])
@@ -285,7 +285,7 @@ in
       "W-l" = "${lib.getExe' lightlocker "light-locker-command"} --lock";
       "W-p" = "${lib.getExe autorandr} --change";
       "W-t" = "${lib.getExe' xfce.xfce4-terminal "xfce4-terminal"}";
-      "W-S-f" = "${lib.getExe' librewolf "librewolf"} --private-window";
+      "W-S-f" = "${lib.getExe config.programs.librewolf.finalPackage} --private-window";
       "XF86AudioMute" = "${lib.getExe pamixer} --toggle-mute";
       "XF86AudioLowerVolume" = "${lib.getExe pamixer} --decrease 2";
       "XF86AudioRaiseVolume" = "${lib.getExe pamixer} --increase 2";
@@ -345,14 +345,14 @@ in
         exec = "${lib.getExe vlc-focus} %U";
       };
     in with pkgs; {
-      "application/pdf" = librewolf;
+      "application/pdf" = config.programs.librewolf.finalPackage;
       "application/vnd.appimage" = appimage-run;
       "application/vnd.oasis.opendocument.spreadsheet" = pair "calc" libreoffice-still;
       "application/x-extension-kdbx" = keepassxc;
       "application/x-extension-xopp" = xournalpp;
       "application/x-krita" = krita;
-      "application/x-tar" = gnome.file-roller;
-      "application/zip" = gnome.file-roller;
+      "application/x-tar" = file-roller;
+      "application/zip" = file-roller;
       "image/jpeg" = feh;
       "image/png" = feh;
       "text/plain" = pair "org.xfce.mousepad" xfce.mousepad;
@@ -361,6 +361,7 @@ in
 
       "application/vnd.sqlite3" = sqlitebrowser;
       "application/xml" = pair "org.xfce.mousepad" xfce.mousepad;
+      "inode/directory" = pair "codium" vscodium;
       "text/x-tex" = gummi;
     };
   };

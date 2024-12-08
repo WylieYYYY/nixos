@@ -6,6 +6,8 @@ pkgs.srcOnly rec {
   pname = "distro-grub-themes";
   version = "3.3";
 
+  stdenv = pkgs.stdenvNoCC;
+
   src = fetchzip {
     url = "https://github.com/ahmedmoselhi/distro-grub-themes/releases/download/v${version}/nixos.tar";
     sha256 = "KQAXNK6sWnUVwOvYzVfolYlEtzFobL2wmDvO8iESUYE=";

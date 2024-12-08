@@ -3,7 +3,7 @@
 # Adds browser and extensions.
 
 let
-  cfg = config.programs.firefox;
+  cfg = config.programs.librewolf;
   nur = pkgs.nur.repos.rycee.firefox-addons;
 
   # Profile name of the default profile, any will do.
@@ -40,15 +40,8 @@ in
     ./../modules/system/writableHomeFile.nix
   ];
 
-  # Adds native messaging host for Tridactyl.
-  nixpkgs.overlays = [(final: prev: {
-    librewolf = prev.librewolf.override {
-      nativeMessagingHosts = [ pkgs.tridactyl-native ];
-    };
-  })];
-
   home.file = with pkgs.firefox-addons; lib.mapAttrs' (name:
-    lib.nameValuePair "${cfg.profilesPath}/${profileName}/${name}"
+    lib.nameValuePair "${cfg.configPath}/${profileName}/${name}"
   ) {
     # Persists extension registry to suppress new installation warning.
     "extensions.json" = lib.mkIf (config.customization.persistence.browser != null) {
@@ -99,17 +92,15 @@ in
 
   # Suppresses browser warning for new tab change.
   # If this file is not writable, the browser will replace it with a reset file.
-  home.writableFile."${cfg.profilesPath}/${profileName}/extension-settings.json" =
+  home.writableFile."${cfg.configPath}/${profileName}/extension-settings.json" =
       lib.mkIf (config.customization.persistence.browser != null) {
     source = "${config.customization.persistence.browser}/extension-settings.json";
   };
 
-  programs.firefox = rec {
+  programs.librewolf = rec {
     enable = true;
-    package = pkgs.librewolf;
-    disclaimerAppName = "LibreWolf";
-    firefoxConfigPath = ".librewolf";
-    profilesPath = firefoxConfigPath;
+
+    nativeMessagingHosts = [ pkgs.tridactyl-native ];
 
     profiles."${profileName}" = rec {
       settings = let
