@@ -31,5 +31,5 @@ in
         })];
       });
     })
-  ];
+  ] ++ config.customization.global.nixpkgsOverlays;
 }

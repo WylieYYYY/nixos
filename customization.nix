@@ -3,6 +3,13 @@
 # Modulized NixOS configuration customizations.
 
 let
+  overlayType = lib.mkOptionType {
+    name = "nixpkgs-overlay";
+    description = "nixpkgs overlay";
+    check = lib.isFunction;
+    merge = lib.mergeOneOption;
+  };
+
   userModule = pkgs.callPackage ./user/customization.nix {
     inherit home-manager-repo impermanence-repo;
     bareSubmodule = true;
@@ -60,6 +67,11 @@ let
         type = lib.types.listOf lib.types.str;
         default = [ ];
         description = "Unfree package names to allow.";
+      };
+      nixpkgsOverlays = lib.mkOption {
+        type = lib.types.listOf overlayType;
+        default = [ ];
+        description = "List of overlays to apply to Nixpkgs.";
       };
       isolated = lib.mkOption {
         type = isolatedModule;

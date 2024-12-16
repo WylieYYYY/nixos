@@ -33,13 +33,6 @@ in
   nix.settings.trusted-public-keys = config.customization.global.trustedPublicKeys;
   nix.settings.trusted-substituters = config.customization.global.trustedSubstituters;
 
-  # Required for OpenTabletDriver.
-  nixpkgs.config.permittedInsecurePackages = [
-    "dotnet-runtime-6.0.36"
-    "dotnet-sdk-6.0.428"
-    "dotnet-sdk-wrapped-6.0.428"
-  ];
-
   # Disables graphical authentication so that autotype can be used.
   programs.ssh.enableAskPassword = false;
 

@@ -17,12 +17,19 @@ stdenv.mkDerivation rec {
       libGL
       xorg.libXtst
       xorg.libXxf86vm
+
+      libvlc
+    ];
+    gsettingsSchemas = builtins.map (pkg: "${pkg}/share/gsettings-schemas/${pkg.name}") [
+      pkgs.gsettings-desktop-schemas
+      pkgs.gtk3
     ];
   in ''
     mkdir --parent "$out/share/${pname}"
     makeWrapper ${lib.getExe pkgs.jdk} $out/bin/${pname} \
         --add-flags '-jar '${lib.escapeShellArg config.customization.persistence.piptube} \
-        --prefix LD_LIBRARY_PATH ':' ${lib.makeLibraryPath runtimeLibraries}
+        --set LD_LIBRARY_PATH ${lib.makeLibraryPath runtimeLibraries} \
+        --set XDG_DATA_DIRS ${lib.concatStringsSep ":" gsettingsSchemas}
   '';
 
   meta.mainProgram = pname;
