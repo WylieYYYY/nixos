@@ -169,6 +169,11 @@ in
     enable = true;
     alsa.enable = true;
     pulse.enable = true;
+
+    # Automically switches so that web audio works by default.
+    extraConfig.pipewire-pulse.switch-on-connect = {
+      "pulse.cmd" = [{ cmd = "load-module"; args = "module-switch-on-connect"; }];
+    };
   };
 
   # Minimal set of system applications.

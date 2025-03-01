@@ -98,7 +98,7 @@ in
     });
     gummi = prev.symlinkJoin {
       name = "gummi";
-      paths = [ prev.gummi prev.texlive.combined.scheme-basic ];
+      paths = with prev; [ gummi texlive.combined.scheme-basic texlivePackages.texcount ];
     };
     papirus-icon-theme = prev.papirus-icon-theme.overrideAttrs (old: {
       patches = (old.patches or [ ]) ++ [ ./../patches/icons-blueman.patch ];
@@ -236,11 +236,11 @@ in
           config.programs.autorandr.hooks.postswitch);
     in with pkgs; ''
       ${displaySettings}
-      ${lib.getExe' tint2 "tint2"} &
+      { sleep 2; ${lib.getExe' tint2 "tint2"} & } &
       ${lib.getExe' cbatticon "cbatticon"} &
       ${lib.getExe' networkmanagerapplet "nm-applet"} &
       ${lib.getExe' blueman "blueman-applet"} &
-      { sleep 2; ${lib.getExe volctl} & }
+      { sleep 2; ${lib.getExe volctl} & } &
       ${lib.getExe caffeine-ng} &
       ${lib.getExe' lightlocker "light-locker"} &
     '';
@@ -276,6 +276,7 @@ in
       "A-k" = windowCycle // { "@name" = "NextWindow"; };
       "A-S-j" = windowSnap "0";
       "A-S-k" = windowSnap "-0";
+      "C-W-t" = { "@name" = "ToggleAlwaysOnTop"; };
       "F1" = "${lib.getExe rofi} -show 'open application'";
 
       # some more common keybinds.
@@ -332,7 +333,7 @@ in
       iniString = builtins.readFile "${pkgs.tint2}/etc/xdg/tint2/tint2rc";
     };
   };
- 
+
   # Defines associations so that no "Open With..." prompt is neccessary.
   custom.mimeApps = {
     enable = true;

@@ -45,10 +45,12 @@
     # Searches Youtube with the query and plays the first audio found.
     functions.play = ''
       set query (string join ' ' $argv)
+      set info (${lib.getExe pkgs.yt-dlp} --print filename -o '%(title)s - %(uploader)s/%(id)s' ytsearch:$query)
+      printf '%s\n' (string replace '/' ' (id: ' $info)')'
       set log (${lib.getExe' pkgs.vlc "cvlc"} --play-and-exit \
-          (${lib.getExe pkgs.yt-dlp} --get-url --format bestaudio ytsearch:$query) 2>&1)
+          (${lib.getExe pkgs.yt-dlp} --get-url --format bestaudio (string split '/' $info)[-1]) 2>&1)
       set play_status $status
-      [ $play_status -ne 0 ] && printf '%s\n' "$log" >&2
+      [ $play_status -ne 0 ] && printf '%s\n' $log >&2
       return $play_status
     '';
 
