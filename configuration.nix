@@ -13,6 +13,17 @@ in
 
 {
 
+  boot.kernelPackages = let
+    pinnedKernelPkgs = import (builtins.fetchTarball {
+      inherit (config.customization.global.pinnedKernelPkgs) sha256;
+      url = "https://github.com/NixOS/nixpkgs/archive/${config.customization.global.pinnedKernelPkgs.rev}.tar.gz";
+    }) {
+      overlays = config.nixpkgs.overlays;
+      config.allowUnfreePredicate = config.nixpkgs.config.allowUnfreePredicate;
+    };
+  in lib.mkIf (config.customization.global.pinnedKernelPkgs.rev != null)
+      (pinnedKernelPkgs.linuxPackagesFor (pinnedKernelPkgs.linux));
+
   # Neccessary for Nix REPL and package search.
   nix.settings.experimental-features = [
     "nix-command"

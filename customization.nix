@@ -78,6 +78,23 @@ let
         default = { };
         description = "Configurations for isolating execution to another user.";
       };
+      pinnedKernelPkgs = lib.mkOption {
+        type = lib.types.submodule {
+          options = {
+            rev = lib.mkOption {
+              type = lib.types.nullOr lib.types.str;
+              default = null;
+              description = "Revision of the pinned Nixpkgs archive to be used for kernel packages.";
+            };
+            sha256 = lib.mkOption {
+              type = lib.types.nullOr lib.types.str;
+              default = null;
+              description = "Hash value for the pinned Nixpkgs archive to be used for kernel packages.";
+            };
+          };
+        };
+        default = { };
+      };
       network = lib.mkOption {
         type = lib.types.submodule {
           options = {
@@ -103,7 +120,7 @@ let
             };
           };
         };
-        default = { }; 
+        default = { };
       };
       persistence = lib.mkOption {
         type = globalPersistenceModule;

@@ -82,6 +82,11 @@ let
         readOnly = true;
         description = "Mirror of the global customization for accessing within Home Manager configuration.";
       };
+      gummiTexlivePackages = lib.mkOption {
+        type = with lib.types; functionTo (listOf (attrsOf anything));
+        default = texlive: with texlive; [ scheme-basic texcount ];
+        description = "TeX Live packages to be bundled with Gummi.";
+      };
       mouseAllowedDomainRegexes = lib.mkOption {
         type = lib.types.listOf lib.types.str;
         default = [ ];

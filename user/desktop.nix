@@ -96,9 +96,14 @@ in
     feh = prev.feh.overrideAttrs (old: {
       patches = (old.patches or [ ]) ++ [ ./../patches/feh-scaling.patch ];
     });
-    gummi = prev.symlinkJoin {
+    gummi = let
+      texlivePackages = pkgs: builtins.listToAttrs (lib.imap0
+        (index: lib.nameValuePair (builtins.toString index))
+        (config.customization.gummiTexlivePackages pkgs.texlive)
+      );
+    in prev.symlinkJoin {
       name = "gummi";
-      paths = with prev; [ gummi texlive.combined.scheme-basic texlivePackages.texcount ];
+      paths = with prev; [ gummi (texlive.combine (texlivePackages prev)) ];
     };
     papirus-icon-theme = prev.papirus-icon-theme.overrideAttrs (old: {
       patches = (old.patches or [ ]) ++ [ ./../patches/icons-blueman.patch ];
