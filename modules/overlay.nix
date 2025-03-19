@@ -6,6 +6,7 @@
 let
   nur = (import ./system/patchedExpressions.nix).nur-rycee;
   applications = {
+    cson                             = ./applications/pkgs/cson.nix;
     distro-grub-themes               = ./applications/pkgs/distro-grub-themes.nix;
     firefox-addons.cubicle           = ./applications/extensions/firefox-cubicle.nix;
     firefox-addons.seventv           = ./applications/extensions/firefox-7tv.nix;

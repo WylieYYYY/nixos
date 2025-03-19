@@ -1,0 +1,16 @@
+{
+  "name": "nix",
+  "version": "2.3.3",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "nix",
+      "version": "2.3.3",
+      "license": "GPLv2",
+      "engines": {
+        "atom": ">0.50.0"
+      }
+    }
+  }
+}
