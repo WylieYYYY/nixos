@@ -72,6 +72,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    home.packages = [ pkgs.pulsar ];
+
     home.file = lib.mkMerge (builtins.map (package: let
       builtPackage = buildAtomPackage package;
     in {

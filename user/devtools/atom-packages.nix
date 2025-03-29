@@ -8,6 +8,13 @@
     sha256 = "3K8WxwyEpbPsxaiJRapd1fZW7LQNND/6gJzHfJq30lA=";
     packageLock = ./../../lockfiles/atom-editorconfig.json;
   }
+  { # git-diff-staged
+    repo = "git-diff-staged";
+    version = "0.5.0";
+    owner = "artarf";
+    sha256 = "7P4DwvJk18Day5GY/TdtkRow/ltJ5TBEW/ycmvGcmTk=";
+    packageLock = ./../../lockfiles/atom-git-diff-staged.json;
+  }
   { # git-plus
     repo = "git-plus";
     version = "8.7.1";
@@ -28,6 +35,13 @@
     owner = "alexmt";
     sha256 = "3d869FqratvkWk6p+lUpQM3KpCpOXn5bHXWBBEE0iaY=";
     packageLock = ./../../lockfiles/atom-language-kotlin.json;
+  }
+  { # language-lua
+    repo = "language-lua";
+    version = "0.9.11";
+    owner = "FireZenk";
+    sha256 = "w7Pmt50AxARc/UwT52//0NeRcPn/jdVDQAl/zQH8zo0=";
+    packageLock = ./../../lockfiles/atom-language-lua.json;
   }
   { # nix
     repo = "atom-nix";
