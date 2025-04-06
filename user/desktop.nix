@@ -74,6 +74,44 @@ let
     (entry "Log Out" { action."@name" = "Exit"; })
     (entry "Shutdown" "shutdown now")
   ];
+
+  # Starts applets and enables locking.
+  # Inherits display settings from `autorandr`.
+  autostart = let
+    displaySettings = lib.concatStringsSep "\n" (lib.attrValues
+        config.programs.autorandr.hooks.postswitch);
+  in with pkgs; ''
+    ${displaySettings}
+    ${lib.getExe' cbatticon "cbatticon"} &
+    ${lib.getExe' networkmanagerapplet "nm-applet"} &
+    ${lib.getExe' blueman "blueman-applet"} &
+    { sleep 2; ${lib.getExe volctl} & } &
+    ${lib.getExe caffeine-ng} &
+    ${lib.getExe' lightlocker "light-locker"} &
+  '';
+
+  # Keybinds that are valid everywhere, globally.
+  globalApplicationKeybinds = with pkgs; {
+    "A-f" = "${lib.getExe rofi} -show filebrowser";
+    "F1" = "${lib.getExe rofi} -show 'open application'";
+
+    "C-A-Delete" = "shutdown now";
+    "Print" = "${lib.getExe scrot} --select --file ~/screenshot.png";
+    "W-f" = "${lib.getExe librewolf-unfocus}";
+    "W-l" = "${lib.getExe' lightlocker "light-locker-command"} --lock";
+    "W-p" = "${lib.getExe autorandr} --change";
+    "W-t" = "${lib.getExe' xfce.xfce4-terminal "xfce4-terminal"}";
+    "W-S-f" = "${lib.getExe config.programs.librewolf.finalPackage} --private-window";
+    "XF86AudioMute" = "${lib.getExe pamixer} --toggle-mute";
+    "XF86AudioLowerVolume" = "${lib.getExe pamixer} --decrease 2";
+    "XF86AudioRaiseVolume" = "${lib.getExe pamixer} --increase 2";
+    "XF86AudioPlay" = "${lib.getExe playerctl} play-pause";
+    "XF86MonBrightnessUp" = "${lib.getExe brightnessctl} set +2%";
+    "XF86MonBrightnessDown" = "${lib.getExe brightnessctl} set 2%-";
+  };
+
+  # Windows with the listed WM_CLASS should be maximized by default.
+  maximizedWmClasses = [ "Com.github.xournalpp.xournalpp" "librewolf" "Pcmanfm" "VSCodium" ];
 in
 
 {
@@ -234,20 +272,10 @@ in
   programs.openbox = {
     enable = true;
     themePackages = [ pkgs.numix-gtk-theme ];
-    # starts taskbar and applets and enables locking.
-    # inherits display settings from `autorandr`.
-    autostart = let
-      displaySettings = lib.concatStringsSep "\n" (lib.attrValues
-          config.programs.autorandr.hooks.postswitch);
-    in with pkgs; ''
-      ${displaySettings}
-      { sleep 2; ${lib.getExe' tint2 "tint2"} & } &
-      ${lib.getExe' cbatticon "cbatticon"} &
-      ${lib.getExe' networkmanagerapplet "nm-applet"} &
-      ${lib.getExe' blueman "blueman-applet"} &
-      { sleep 2; ${lib.getExe volctl} & } &
-      ${lib.getExe caffeine-ng} &
-      ${lib.getExe' lightlocker "light-locker"} &
+    # Additionally starts taskbar apart from standard autostart.
+    autostart = ''
+      { sleep 2; ${lib.getExe' pkgs.tint2 "tint2"} & } &
+      ${autostart}
     '';
     # use the menu expression as-is, easy.
     menu = appMenu;
@@ -276,29 +304,12 @@ in
     in {
       # shortcuts and unusual keybinds.
       "A-d" = { "@name" = "Close"; };
-      "A-f" = "${lib.getExe rofi} -show filebrowser";
       "A-j" = windowCycle // { "@name" = "PreviousWindow"; };
       "A-k" = windowCycle // { "@name" = "NextWindow"; };
       "A-S-j" = windowSnap "0";
       "A-S-k" = windowSnap "-0";
       "C-W-t" = { "@name" = "ToggleAlwaysOnTop"; };
-      "F1" = "${lib.getExe rofi} -show 'open application'";
-
-      # some more common keybinds.
-      "C-A-Delete" = "shutdown now";
-      "Print" = "${lib.getExe scrot} --select --file ~/screenshot.png";
-      "W-f" = "${lib.getExe librewolf-unfocus}";
-      "W-l" = "${lib.getExe' lightlocker "light-locker-command"} --lock";
-      "W-p" = "${lib.getExe autorandr} --change";
-      "W-t" = "${lib.getExe' xfce.xfce4-terminal "xfce4-terminal"}";
-      "W-S-f" = "${lib.getExe config.programs.librewolf.finalPackage} --private-window";
-      "XF86AudioMute" = "${lib.getExe pamixer} --toggle-mute";
-      "XF86AudioLowerVolume" = "${lib.getExe pamixer} --decrease 2";
-      "XF86AudioRaiseVolume" = "${lib.getExe pamixer} --increase 2";
-      "XF86AudioPlay" = "${lib.getExe playerctl} play-pause";
-      "XF86MonBrightnessUp" = "${lib.getExe brightnessctl} set +2%";
-      "XF86MonBrightnessDown" = "${lib.getExe brightnessctl} set 2%-";
-    };
+    } // globalApplicationKeybinds;
     rc = {
       # follows `themePackages` above.
       theme.name."text()" = "Numix";
@@ -310,11 +321,11 @@ in
         }];
       };
       # opens some applications maximized.
-      applications.application = (builtins.map (class: {
+      applications.application = builtins.map (class: {
         "@class" = class;
         "@type" = "normal";
         maximized."text()" = "yes";
-      }) [ "Com.github.xournalpp.xournalpp" "librewolf" "Pcmanfm" "VSCodium" ]);
+      }) maximizedWmClasses;
     };
   };
 

@@ -16,9 +16,9 @@ let
       then [ ]
     # recurse and flatten if it is a sub-menu.
     else if builtins.isList entry.value
-      then lib.flatten (builtins.map (subEntry: flattenEntryRecursive subEntry) entry.value)
+      then lib.flatten (builtins.map flattenEntryRecursive entry.value)
     # otherwise it should be executable, either a package or a command string.
-    else [(lib.nameValuePair (lib.escapeShellArg entry.name) entry.value)];
+    else [ (lib.nameValuePair (lib.escapeShellArg entry.name) entry.value) ];
 
   # Flattens the given menu and prepends a Keepmenu entry.
   flattenedMenu = lib.optional (config.customization.persistence.kdbx != null) (

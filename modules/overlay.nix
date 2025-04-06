@@ -11,18 +11,23 @@ let
     firefox-addons.cubicle           = ./applications/extensions/firefox-cubicle.nix;
     firefox-addons.seventv           = ./applications/extensions/firefox-7tv.nix;
     gitlab-ci-local                  = ./applications/pkgs/gitlab-ci-local.nix;
+    lua52Packages.awesome-ez         = ./applications/pkgs/awesome-ez.nix;
     noto-cjk-mono                    = ./applications/pkgs/noto-cjk-mono.nix;
     nur.repos.rycee                  = { pkgs, ... }: pkgs.callPackage "${pkgs.callPackage nur { }}" { };
     shellfront                       = ./applications/pkgs/shellfront.nix;
     piptube                          = ./applications/pkgs/piptube.nix;
   };
+
+  callPackagesWithPathInAttrs = pkgs: lib.mapAttrsRecursive (path: value:
+    [{ inherit path; update = _: pkgs.callPackage value { inherit config; }; }]
+  ) applications;
+  updates = pkgs: lib.flatten (lib.collect builtins.isList
+      (callPackagesWithPathInAttrs pkgs));
 in
 
 {
   config.nixpkgs.overlays = [
-    (final: prev: prev // (lib.mapAttrsRecursive (_: value:
-      prev.callPackage value { inherit config; }
-    ) applications))
+    (final: prev: lib.updateManyAttrsByPath (updates prev) prev)
     (final: prev: {
       libadwaita = prev.libadwaita.overrideAttrs (old: {
         doCheck = false;
