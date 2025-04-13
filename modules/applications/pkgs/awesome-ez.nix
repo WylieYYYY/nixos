@@ -1,5 +1,7 @@
 { pkgs, fetchFromGitHub, fetchurl, ... }:
 
+# Create Awesome key and button bindings from simple definitions.
+
 pkgs.lua5_2.pkgs.buildLuarocksPackage rec {
   pname = "awesome-ez";
   version = "0.3.0-2";
