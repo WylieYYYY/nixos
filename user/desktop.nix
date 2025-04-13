@@ -41,6 +41,10 @@ let
     in lib.mapAttrsToList (name: value:
       entry value.name (userForward { user = name; command = value.value; })
     ) (config.customization.global.isolated.entries { inherit lib pkgs; });
+    editorEntry = lib.optional (config.customization.codeEditor != null) ({
+      pulsar = entry "Pulsar Edit" (lib.getExe' pkgs.pulsar "pulsar");
+      vscodium = entry "VSCodium" pkgs.vscodium;
+    })."${config.customization.codeEditor}";
   in with pkgs; [
     "Applications"
     (entry "Accessories" [
@@ -60,12 +64,12 @@ let
       (entry "Krita" (lib.getExe' krita "krita"))
       (entry "VLC" (lib.getExe' vlc "vlc"))
     ])
-    (entry "Work" [
+    (entry "Work" ([
       (entry "Gummi" (lib.getExe' gummi "gummi"))
       (entry "LibreOffice" (lib.getExe' libreoffice-still "libreoffice"))
-      (entry "VSCodium" vscodium)
+    ] ++ editorEntry ++ [
       (entry "Xournal++" (lib.getExe' xournalpp "xournalpp"))
-    ])
+    ]))
     (entry "File Manager" pcmanfm)
     "System"
     (entry "Terminal" (lib.getExe' xfce.xfce4-terminal "xfce4-terminal"))
@@ -361,6 +365,11 @@ in
         desktopName = "VLC media player";
         exec = "${lib.getExe vlc-focus} %U";
       };
+      editorEntry = lib.optionalAttrs (config.customization.codeEditor != null) {
+        "inode/directory" = if config.customization.codeEditor == "pulsar"
+                            then pair "Pulsar" pkgs.pulsar
+                            else pair "codium" pkgs.vscodium;
+      };
     in with pkgs; {
       "application/pdf" = config.programs.librewolf.finalPackage;
       "application/vnd.appimage" = appimage-run;
@@ -378,9 +387,8 @@ in
 
       "application/vnd.sqlite3" = sqlitebrowser;
       "application/xml" = pair "org.xfce.mousepad" xfce.mousepad;
-      "inode/directory" = pair "codium" vscodium;
       "text/x-tex" = gummi;
-    };
+    } // editorEntry;
   };
 
 }

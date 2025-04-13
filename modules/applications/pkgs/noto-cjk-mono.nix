@@ -1,5 +1,7 @@
 { pkgs, stdenv, fetchFromGitHub, ... }:
 
+# Monospace that is double-width for CJK characters.
+
 stdenv.mkDerivation rec {
   pname = "noto-cjk-mono";
   version = "2.004";

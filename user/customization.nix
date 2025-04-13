@@ -72,6 +72,11 @@ let
           `useCubicleExtension` must be true for this to take effect.
         '';
       };
+      codeEditor = lib.mkOption {
+        type = with lib.types; nullOr (enum [ "pulsar" "vscodium" ]);
+        default = null;
+        description = "Code editor to be enabled.";
+      };
       git = lib.mkOption {
         type = gitConfigModule;
         default = { };
