@@ -20,16 +20,8 @@ local tasklist_buttons = gears.table.join(
 )
 
 local function focus_last_in_history(screen, clients)
-    local has_any_focused = false
-    for _, c in ipairs(clients) do
-        if client.focus == c then
-            has_any_focused = true
-            break
-        end
-    end
-
     local next_focus_client = awful.client.focus.history.get(screen, 0)
-    if (not has_any_focused) and (next_focus_client ~= nil) then
+    if (client.focus == nil) and (next_focus_client ~= nil) then
         next_focus_client:emit_signal("request::activate", "history", { raise = true })
     end
 end

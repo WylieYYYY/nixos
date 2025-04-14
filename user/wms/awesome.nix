@@ -1,4 +1,4 @@
-{ appMenu, autostart, globalApplicationKeybinds, maximizedWmClasses, lib, pkgs, ... }:
+{ appMenu, autostart, globalApplicationKeybinds, maximizedWmClasses, config, lib, pkgs, ... }:
 
 # Adds Awesome with Lua libraries and source files.
 # Reuses the same configuration structures as the Openbox configurations.
@@ -43,24 +43,28 @@ in
 {
 
   # Bundles WM common configurations JSON file with Lua source files.
-  xdg.configFile."awesome".source = pkgs.stdenv.mkDerivation {
-    name = "awesome-config-bundled";
+  xdg.configFile = lib.mkIf (
+    config.customization.windowManager == "awesome"
+  ) {
+    "awesome".source = pkgs.stdenv.mkDerivation {
+      name = "awesome-config-bundled";
 
-    srcs = [
-      (builtins.path { name = "awesome-config"; path = ./awesome; })
-      (pkgs.writeText "wm-common-json" (builtins.toJSON {
-        app_menu = filteredAppMenu;
-        global_application_keybinds = metaReplacedGlobalApplicationKeybinds;
-        maximized_wm_classes = maximizedWmClasses;
-      }))
-    ];
+      srcs = [
+        (builtins.path { name = "awesome-config"; path = ./awesome; })
+        (pkgs.writeText "wm-common-json" (builtins.toJSON {
+          app_menu = filteredAppMenu;
+          global_application_keybinds = metaReplacedGlobalApplicationKeybinds;
+          maximized_wm_classes = maximizedWmClasses;
+        }))
+      ];
 
-    dontUnpack = true;
+      dontUnpack = true;
 
-    buildPhase = ''
-      install --mode 444 -D --target-directory $out ''${srcs% *}/*
-      install --mode 444 ''${srcs#* } $out/wm-common.json
-    '';
+      buildPhase = ''
+        install --mode 444 -D --target-directory $out ''${srcs% *}/*
+        install --mode 444 ''${srcs#* } $out/wm-common.json
+      '';
+    };
   };
 
   # Adds Luarocks libraries and autostart.
@@ -70,7 +74,7 @@ in
       " --search ${getLuaPath path "share"} --search ${getLuaPath path "lib"}"
     );
     luaPackages = with pkgs.lua52Packages; [ awesome-ez cjson ];
-  in {
+  in lib.mkIf (config.customization.windowManager == "awesome") {
     enable = true;
     windowManager.command = ''
       ${lib.getExe' pkgs.awesome "awesome"}${makeSearchPath luaPackages} &

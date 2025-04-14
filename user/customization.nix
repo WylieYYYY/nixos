@@ -64,6 +64,11 @@ let
         default = true;
         description = "Whether to suppress Blueman connection notifications.";
       };
+      codeEditor = lib.mkOption {
+        type = with lib.types; nullOr (enum [ "pulsar" "vscodium" ]);
+        default = null;
+        description = "Code editor to be enabled.";
+      };
       containerSuffixes = lib.mkOption {
         type = with lib.types; attrsOf (listOf str);
         default = { };
@@ -71,11 +76,6 @@ let
           Attribute set of container names to their suffixes.
           `useCubicleExtension` must be true for this to take effect.
         '';
-      };
-      codeEditor = lib.mkOption {
-        type = with lib.types; nullOr (enum [ "pulsar" "vscodium" ]);
-        default = null;
-        description = "Code editor to be enabled.";
       };
       git = lib.mkOption {
         type = gitConfigModule;
@@ -104,6 +104,11 @@ let
           Whether the browser persisting directory has a build of Cubicle to link.
           Enables the extension with the name `cubicle.xpi` under the persisting directory.
         '';
+      };
+      windowManager = lib.mkOption {
+        type = lib.types.enum [ "awesome" "openbox" ];
+        default = "awesome";
+        description = "Window manager to use, Awesome has better multi-screen support and customization.";
       };
       persistence = lib.mkOption {
         type = persistenceModule;
