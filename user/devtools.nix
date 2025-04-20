@@ -74,6 +74,7 @@
     userName = config.customization.git.username;
 
     aliases = {
+      ax = "!git stash push --staged && git stash push --include-untracked && git stash pop --index stash@{1}";
       br = "branch";
       co = "checkout";
       l  = "log --oneline --graph --decorate --all";
