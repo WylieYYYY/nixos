@@ -115,7 +115,7 @@ let
   };
 
   # Windows with the listed WM_CLASS should be maximized by default.
-  maximizedWmClasses = [ "Com.github.xournalpp.xournalpp" "librewolf" "Pcmanfm" "VSCodium" ];
+  maximizedWmClasses = [ "Com.github.xournalpp.xournalpp" "librewolf" "Pcmanfm" "Pulsar" "VSCodium" ];
 in
 
 {

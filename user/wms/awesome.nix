@@ -56,13 +56,21 @@ in
           global_application_keybinds = metaReplacedGlobalApplicationKeybinds;
           maximized_wm_classes = maximizedWmClasses;
         }))
+        (pkgs.stdenv.mkDerivation {
+          name = "awesome-snap";
+          src = "${pkgs.awesome}/share/awesome/lib/awful/mouse";
+          patches = [ ./../../patches/awesome-snap-maximize-both-axis.patch ];
+          buildPhase = "install --mode 444 -D --target-directory $out snap.lua";
+        })
       ];
 
       dontUnpack = true;
 
       buildPhase = ''
-        install --mode 444 -D --target-directory $out ''${srcs% *}/*
-        install --mode 444 ''${srcs#* } $out/wm-common.json
+        srcs=($srcs)
+        install --mode 444 -D --target-directory $out ''${srcs[0]}/*
+        install --mode 444 ''${srcs[1]} $out/wm-common.json
+        install --mode 444 ''${srcs[2]}/snap.lua $out/snap.lua
       '';
     };
   };

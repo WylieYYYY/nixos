@@ -26,7 +26,7 @@ client.connect_signal("request::titlebars", function(c)
     awful.titlebar(c):setup({
         {
             awful.titlebar.widget.iconwidget(c),
-            buttons = buttons,
+            awful.titlebar.widget.stickybutton(c),
             layout = wibox.layout.fixed.horizontal,
         },
         {
@@ -58,5 +58,6 @@ client.connect_signal("unfocus", function(c)
 end)
 
 client.connect_signal("property::ontop", function(c)
+    c.sticky = c.ontop
     c.border_width = beautiful.border_width * (c.ontop and 5 or 1)
 end)

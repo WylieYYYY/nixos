@@ -6,6 +6,9 @@ local naughty = require("naughty")
 
 local json = require("cjson")
 
+awful.mouse.snap.edge_enabled = false
+awful.mouse.snap = require("snap")
+
 if awesome.startup_errors then
     naughty.notify({
         preset = naughty.config.presets.critical,

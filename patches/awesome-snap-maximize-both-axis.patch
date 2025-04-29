@@ -1,0 +1,26 @@
+diff --git a/snap.lua b/snap.lua
+index b1a115e..41b12a3 100644
+--- a/snap.lua
++++ b/snap.lua
+@@ -72,6 +72,9 @@ local function show_placeholder(geo)
+ end
+
+ local function build_placement(snap, axis)
++    if snap == "top" and axis == "horizontally" then
++        return function(...) return aplace.maximize(...) end
++    end
+     return aplace.scale
+         + aplace[snap]
+         + (
+@@ -138,6 +141,11 @@ local function apply_areasnap(c, args)
+
+     placeholder_w.visible = false
+
++    if current_snap == "top" and current_axis == "horizontally" then
++        c.maximized = true
++        return
++    end
++
+     return build_placement(current_snap, current_axis)(c,{
+         to_percent     = 0.5,
+         honor_workarea = true,
