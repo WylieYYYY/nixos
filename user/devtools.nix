@@ -73,12 +73,20 @@
     userEmail = config.customization.git.email;
     userName = config.customization.git.username;
 
-    aliases = {
-      ax = "!git stash push --staged && git stash push --include-untracked && git stash pop --index stash@{1}";
+    aliases = let
+      git-stash-except-staged = pkgs.writeShellScriptBin "git-stash-except-staged" ''
+        git stash push --staged
+        status=$?
+        git stash push --include-untracked
+        [ status -eq 0 ] && git stash pop --index stash@{1}
+      '';
+    in {
+      ax = "!${lib.getExe git-stash-except-staged}";
       br = "branch";
       co = "checkout";
       l  = "log --oneline --graph --decorate --all";
       st = "status";
+      undo = "reset --soft HEAD~1";
     };
 
     extraConfig = {

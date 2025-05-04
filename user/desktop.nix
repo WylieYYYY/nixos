@@ -17,18 +17,25 @@ let
     ${xdotool} key 'F6'
   '';
 
-  # VLC does not focus on itself when a new file is opened.
+  # Changes VLC so that it grabs focus when a new file is opened and plays audio minimized.
   vlc-focus = let
     wmctrl = lib.getExe pkgs.wmctrl;
   in pkgs.writeShellScriptBin "vlc-focus" ''
-    id=""
-    ${lib.getExe' pkgs.vlc "vlc"} --started-from-file "$@" &
-    while [ -z "$id" ]; do
-      id="$(${wmctrl} -xl | ${lib.getExe pkgs.gawk} '$3 == "vlc.vlc" {print $1}' | \
-          ${lib.getExe' pkgs.coreutils "tail"} -1)"
-      sleep 0.1s
-    done
-    ${wmctrl} -ia "$id"
+    codecs="$(${lib.getExe' pkgs.ffmpeg "ffprobe"} -v quiet -show_entries stream=codec_type \
+        -of default=noprint_wrappers=1:nokey=1 "$1" | grep --fixed-strings --line-regexp 'video')"
+    if [ $# -ne 1 ] || [ $? -eq 0 ]; then
+      ${lib.getExe pkgs.vlc} --started-from-file "$@" &
+
+      id=""
+      while [ -z "$id" ]; do
+        id="$(${wmctrl} -xl | ${lib.getExe pkgs.gawk} '$3 == "vlc.vlc" {print $1}' | \
+            ${lib.getExe' pkgs.coreutils "tail"} -1)"
+        sleep 0.1s
+      done
+      ${wmctrl} -ia "$id"
+    else
+      ${lib.getExe pkgs.vlc} --qt-start-minimized --started-from-file "$1" &
+    fi
   '';
 
   # Application menu that is declared as an expression.
