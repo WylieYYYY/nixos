@@ -107,7 +107,12 @@ let
     "F1" = "${lib.getExe rofi} -show 'open application'";
 
     "C-A-Delete" = "shutdown now";
-    "Print" = "${lib.getExe scrot} --select --file ~/screenshot.png";
+    # sleep is necessary for allowing Awesome to release the keyboard for grabbing.
+    "Print" = lib.getExe (pkgs.writeShellScriptBin "copy-screenshot" ''
+      sleep 0.2s
+      ${lib.getExe scrot} --select --file - | \
+          ${lib.getExe xclip} -selection clipboard -target image/png
+    '');
     "W-f" = "${lib.getExe librewolf-unfocus}";
     "W-l" = "${lib.getExe' lightlocker "light-locker-command"} --lock";
     "W-p" = "${lib.getExe autorandr} --change";

@@ -10,7 +10,7 @@ let
   profileName = "default";
 
   # Extensions to install, mutable for building symlink manually below.
-  extensions = [
+  immutableExtensions = [
     nur.darkreader
     nur.tridactyl
     nur.ublock-origin
@@ -21,7 +21,7 @@ let
 
   # Predicatable UUIDs for extensions, allows for setting new tab page.
   extensionUuidMap = let
-    addonIds = builtins.map (extension: extension.meta.addonId) (extensions ++ mutableExtensions);
+    addonIds = builtins.map (extension: extension.meta.addonId) (immutableExtensions ++ mutableExtensions);
     # randomly generated UUID namespace.
     uuidNamespace = "aefb136e-fa1f-40f4-9f8b-f2e742e5460e";
   in lib.genAttrs addonIds (addonId:
@@ -145,11 +145,11 @@ in
       };
       search = rec {
         force = true;
-        default = "DuckDuckGo";
+        default = "ddg";
         privateDefault = default;
-        order = [ default "Google" ];
+        order = [ default "google" ];
       };
-      inherit extensions;
+      extensions.packages = immutableExtensions;
     };
   };
 

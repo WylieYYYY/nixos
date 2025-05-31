@@ -18,7 +18,7 @@ stdenv.mkDerivation rec {
       xorg.libXtst
       xorg.libXxf86vm
 
-      libvlc
+      vlc
     ];
     gsettingsSchemas = builtins.map (pkg: "${pkg}/share/gsettings-schemas/${pkg.name}") [
       pkgs.gsettings-desktop-schemas
