@@ -11,6 +11,16 @@ Current configuration without modification running under QEMU.
 - Multiuser setup for isolating applications;
 - Custom patches to applications for quality of life improvements;
 
+### Testing
+The configuration can be tested in a virtual machine on a system with Nix installed.
+
+1. Run `cd test` to change the working directory to the test directory.
+2. Run `nix-shell` to build the script that builds the virtual machine.
+3. Run `build-vm <NixOS version>`, replacing `<NixOS version>` with the target version.
+4. The virtual machine is now built, run `result/bin/run-nixos-vm` to boot.
+
+The password of the virtual machine is `password`.
+
 ### Setup
 1. Download NixOS installation medium from https://nixos.org.
 2. Mount a tmpfs on `/mnt` and a persistent volume on `/mnt/nix`.
