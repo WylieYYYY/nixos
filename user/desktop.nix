@@ -140,6 +140,7 @@ in
     ./../modules/applications/openbox.nix
     ./../modules/system/writableHomeFile.nix
     ./browser.nix
+    ./conky.nix
     ./devtools.nix
     (import ./rofi.nix (args // { inherit appMenu; }))
     (import ./wms/awesome.nix wmArgs)

@@ -97,6 +97,11 @@ let
         default = [ ];
         description = "Domain regular expressions that are excluded from Tridactyl's no mouse mode.";
       };
+      trackedTickers = lib.mkOption {
+        type = with lib.types; listOf str;
+        default = [ ];
+        description = "Tickers to be tracked by the Conky widget.";
+      };
       useCubicleExtension = lib.mkOption {
         type = lib.types.bool;
         default = false;

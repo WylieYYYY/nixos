@@ -1,0 +1,160 @@
+diff --git a/app/services/jsonService.js b/app/services/jsonService.js
+index df4254c..dc83142 100644
+--- a/app/services/jsonService.js
++++ b/app/services/jsonService.js
+@@ -5,5 +5,5 @@ module.exports = {
+ };
+ 
+ function jsonExport(data) {
+-    fs.writeFileSync('terminal-stocks_' + Date.now() + '_.json', JSON.stringify(data));
+-}
+\ No newline at end of file
++    console.log(JSON.stringify(data));
++}
+diff --git a/app/services/yahooService.js b/app/services/yahooService.js
+index e18dee7..299bc00 100644
+--- a/app/services/yahooService.js
++++ b/app/services/yahooService.js
+@@ -52,11 +52,12 @@ function getCurrentPrice(tickers) {
+     return new Promise(async function (resolve, reject) {
+       try {
+         var entity = await yahooFinance.quote(ticker)
+-        var price = getPrice(entity);
+-        var change = getChange(entity);
+-        var changePercent = getChangePercent(entity);
+-        var atDate = getAtDate(entity);
+-        var atTime = getAtTime(entity);
++        var shouldGetPostMarket = isLatestPostMarket(entity);
++        var price = getPrice(entity, shouldGetPostMarket);
++        var change = getChange(entity, shouldGetPostMarket);
++        var changePercent = getChangePercent(entity, shouldGetPostMarket);
++        var atDate = getAtDate(entity, shouldGetPostMarket);
++        var atTime = getAtTime(entity, shouldGetPostMarket);
+         var longName = (getLongName(entity)) ? getLongName(entity) : getShortName(entity);
+         var dayRange = getDayRange(entity);
+         var fiftyTwoWeekRange = getFiftyTwoWeekRange(entity);
+@@ -91,12 +92,13 @@ function getMarketSummary() {
+       var entities = await yahooFinance.quote(tickers)
+       var data = [];
+       for (let entity of entities) {
++        var shouldGetPostMarket = isLatestPostMarket(entity);
+         var shortName = (getShortName(entity)) ? getShortName(entity) : getLongName(entity);
+         shortName = (shortName) ? shortName : entity.symbol;
+-        var price = getPrice(entity);
+-        var change = getChange(entity);
+-        var changePercent = getChangePercent(entity);
+-        var atDate = getAtDate(entity);
++        var price = getPrice(entity, shouldGetPostMarket);
++        var change = getChange(entity, shouldGetPostMarket);
++        var changePercent = getChangePercent(entity, shouldGetPostMarket);
++        var atDate = getAtDate(entity, shouldGetPostMarket);
+         data.push({ ticker: entity.symbol, shortName, price, change, changePercent, atDate });
+       }
+       resolve(data);
+@@ -127,24 +129,28 @@ function getHistoricalPrices(ticker, options) {
+   });
+ }
+ 
+-function getPrice(entity) {
+-  return formatter.format(entity.regularMarketPrice);
++function isLatestPostMarket(entity) {
++  return entity.hasOwnProperty('postMarketTime') && entity.postMarketTime > entity.regularMarketTime;
+ }
+ 
+-function getChange(entity) {
+-  return parseFloat(entity.regularMarketChange).toFixed(2);
++function getPrice(entity, shouldGetPostMarket) {
++  return formatter.format(shouldGetPostMarket ? entity.postMarketPrice : entity.regularMarketPrice);
+ }
+ 
+-function getChangePercent(entity) {
+-  return parseFloat(entity.regularMarketChangePercent).toFixed(2);
++function getChange(entity, shouldGetPostMarket) {
++  return parseFloat(shouldGetPostMarket ? entity.postMarketChange : entity.regularMarketChange).toFixed(2);
+ }
+ 
+-function getAtDate(entity) {
+-return new Date(entity.regularMarketTime).toLocaleDateString('en-US', dateFormattingOptions)
++function getChangePercent(entity, shouldGetPostMarket) {
++  return parseFloat(shouldGetPostMarket ? entity.postMarketChangePercent : entity.regularMarketChangePercent).toFixed(2);
+ }
+ 
+-function getAtTime(entity) {
+-  return entity.regularMarketTime;
++function getAtDate(entity, shouldGetPostMarket) {
++return new Date(shouldGetPostMarket ? entity.postMarketTime : entity.regularMarketTime).toLocaleDateString('en-US', dateFormattingOptions)
++}
++
++function getAtTime(entity, shouldGetPostMarket) {
++  return shouldGetPostMarket ? entity.postMarketTime : entity.regularMarketTime;
+ }
+ 
+ function getLongName(entity) {
+@@ -169,6 +175,6 @@ function getFiftyTwoWeekRange(entity) {
+ 
+ function getMarketState(entity) {
+   if( entity.marketState) {
+-    return (entity.marketState === "REGULAR") ? "open" : "closed" 
++    return (entity.marketState === "REGULAR") ? "open" : "closed"
+   }
+-}
+\ No newline at end of file
++}
+diff --git a/bin/index.js b/bin/index.js
+index 4daa158..438e8e7 100755
+--- a/bin/index.js
++++ b/bin/index.js
+@@ -1,7 +1,17 @@
+ #!/usr/bin/env node
+ 
++const yahooFinance = require('yahoo-finance2').default;
+ const stocksCli = require('../cli/stocksCli')
+ 
++yahooFinance.setGlobalConfig({
++    logger: {
++        info: () => {},
++        warn: () => {},
++        debug: () => {},
++        error: () => {}
++    }
++});
++
+ var argv = require('yargs/yargs')(process.argv.slice(2))
+     .usage('Usage: $0 -ticker [string] --historical [boolean] --ms [boolean]')
+     .example('$0 -ticker <ticker> --historical', 'returns the price information of a given ticker')
+@@ -51,4 +61,4 @@ if (argv.market) {
+     } else {
+         stocksCli.fetchCurrentPrice([ticker], options);
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/cli/stocksCli.js b/cli/stocksCli.js
+index d869c93..154ef4c 100644
+--- a/cli/stocksCli.js
++++ b/cli/stocksCli.js
+@@ -15,7 +15,7 @@ function fetchCurrentPrice(tickers, options = {}) {
+         .then((data) => {
+             if (options.export === 'json') {
+                 jsonService.jsonExport(data);
+-                console.log(responseTransformer.transformExportJsonSuccess())
++                console.error(responseTransformer.transformExportJsonSuccess())
+             } else if (options.export === 'csv') {
+                 csvService.csvExport(data);
+                 console.log(responseTransformer.transformExportCsvSuccess())
+@@ -23,7 +23,7 @@ function fetchCurrentPrice(tickers, options = {}) {
+                 console.log(responseTransformer.transformCurrentPrice(data, options));
+             }
+         }).catch((error) => {
+-            console.log(responseTransformer.transformError(error));
++            console.error(responseTransformer.transformError(error));
+         });
+ }
+ 
+@@ -68,4 +68,4 @@ function fetchChart(ticker) {
+         }).catch((error) => {
+             console.log(responseTransformer.transformError(error));
+         });
+-}
+\ No newline at end of file
++}
