@@ -12,7 +12,7 @@ index df4254c..dc83142 100644
 +    console.log(JSON.stringify(data));
 +}
 diff --git a/app/services/yahooService.js b/app/services/yahooService.js
-index e18dee7..299bc00 100644
+index e18dee7..0df0b47 100644
 --- a/app/services/yahooService.js
 +++ b/app/services/yahooService.js
 @@ -52,11 +52,12 @@ function getCurrentPrice(tickers) {
@@ -24,12 +24,12 @@ index e18dee7..299bc00 100644
 -        var changePercent = getChangePercent(entity);
 -        var atDate = getAtDate(entity);
 -        var atTime = getAtTime(entity);
-+        var shouldGetPostMarket = isLatestPostMarket(entity);
-+        var price = getPrice(entity, shouldGetPostMarket);
-+        var change = getChange(entity, shouldGetPostMarket);
-+        var changePercent = getChangePercent(entity, shouldGetPostMarket);
-+        var atDate = getAtDate(entity, shouldGetPostMarket);
-+        var atTime = getAtTime(entity, shouldGetPostMarket);
++        var marketStatus = getMarketStatus(entity);
++        var price = getPrice(entity, marketStatus);
++        var change = getChange(entity, marketStatus);
++        var changePercent = getChangePercent(entity, marketStatus);
++        var atDate = getAtDate(entity, marketStatus);
++        var atTime = getAtTime(entity, marketStatus);
          var longName = (getLongName(entity)) ? getLongName(entity) : getShortName(entity);
          var dayRange = getDayRange(entity);
          var fiftyTwoWeekRange = getFiftyTwoWeekRange(entity);
@@ -37,65 +37,76 @@ index e18dee7..299bc00 100644
        var entities = await yahooFinance.quote(tickers)
        var data = [];
        for (let entity of entities) {
-+        var shouldGetPostMarket = isLatestPostMarket(entity);
++        var marketStatus = getMarketStatus(entity);
          var shortName = (getShortName(entity)) ? getShortName(entity) : getLongName(entity);
          shortName = (shortName) ? shortName : entity.symbol;
 -        var price = getPrice(entity);
 -        var change = getChange(entity);
 -        var changePercent = getChangePercent(entity);
 -        var atDate = getAtDate(entity);
-+        var price = getPrice(entity, shouldGetPostMarket);
-+        var change = getChange(entity, shouldGetPostMarket);
-+        var changePercent = getChangePercent(entity, shouldGetPostMarket);
-+        var atDate = getAtDate(entity, shouldGetPostMarket);
++        var price = getPrice(entity, marketStatus);
++        var change = getChange(entity, marketStatus);
++        var changePercent = getChangePercent(entity, marketStatus);
++        var atDate = getAtDate(entity, marketStatus);
          data.push({ ticker: entity.symbol, shortName, price, change, changePercent, atDate });
        }
        resolve(data);
-@@ -127,24 +129,28 @@ function getHistoricalPrices(ticker, options) {
+@@ -127,24 +129,35 @@ function getHistoricalPrices(ticker, options) {
    });
  }
  
 -function getPrice(entity) {
 -  return formatter.format(entity.regularMarketPrice);
-+function isLatestPostMarket(entity) {
-+  return entity.hasOwnProperty('postMarketTime') && entity.postMarketTime > entity.regularMarketTime;
++function getMarketStatus(entity) {
++  if (entity.hasPrePostMarketData) {
++    let state = entity.marketState.toLowerCase();
++    if (state.includes('PRE')) return 'pre';
++    if (state.includes('POST')) return 'post';
++    return 'regular';
++  } else {
++    return 'regular';
++  }
++}
++
++function getPrice(entity, marketStatus) {
++  return formatter.format(entity[marketStatus + 'MarketPrice']);
  }
  
 -function getChange(entity) {
 -  return parseFloat(entity.regularMarketChange).toFixed(2);
-+function getPrice(entity, shouldGetPostMarket) {
-+  return formatter.format(shouldGetPostMarket ? entity.postMarketPrice : entity.regularMarketPrice);
++function getChange(entity, marketStatus) {
++  return parseFloat(entity[marketStatus + 'MarketChange']).toFixed(2);
  }
  
 -function getChangePercent(entity) {
 -  return parseFloat(entity.regularMarketChangePercent).toFixed(2);
-+function getChange(entity, shouldGetPostMarket) {
-+  return parseFloat(shouldGetPostMarket ? entity.postMarketChange : entity.regularMarketChange).toFixed(2);
++function getChangePercent(entity, marketStatus) {
++  return parseFloat(entity[marketStatus + 'MarketChangePercent']).toFixed(2);
  }
  
 -function getAtDate(entity) {
 -return new Date(entity.regularMarketTime).toLocaleDateString('en-US', dateFormattingOptions)
-+function getChangePercent(entity, shouldGetPostMarket) {
-+  return parseFloat(shouldGetPostMarket ? entity.postMarketChangePercent : entity.regularMarketChangePercent).toFixed(2);
++function getAtDate(entity, marketStatus) {
++return new Date(entity[marketStatus + 'MarketTime']).toLocaleDateString('en-US', dateFormattingOptions)
  }
  
 -function getAtTime(entity) {
 -  return entity.regularMarketTime;
-+function getAtDate(entity, shouldGetPostMarket) {
-+return new Date(shouldGetPostMarket ? entity.postMarketTime : entity.regularMarketTime).toLocaleDateString('en-US', dateFormattingOptions)
-+}
-+
-+function getAtTime(entity, shouldGetPostMarket) {
-+  return shouldGetPostMarket ? entity.postMarketTime : entity.regularMarketTime;
++function getAtTime(entity, marketStatus) {
++  return entity[marketStatus + 'MarketTime'];
  }
  
  function getLongName(entity) {
-@@ -169,6 +175,6 @@ function getFiftyTwoWeekRange(entity) {
+@@ -168,7 +181,9 @@ function getFiftyTwoWeekRange(entity) {
+ }
  
  function getMarketState(entity) {
-   if( entity.marketState) {
+-  if( entity.marketState) {
 -    return (entity.marketState === "REGULAR") ? "open" : "closed" 
-+    return (entity.marketState === "REGULAR") ? "open" : "closed"
++  if (entity.hasPrePostMarketData) {
++    return entity.marketState;
++  } else {
++    return entity.marketState === 'REGULAR' ? 'REGULAR' : 'CLOSED';
    }
 -}
 \ No newline at end of file
