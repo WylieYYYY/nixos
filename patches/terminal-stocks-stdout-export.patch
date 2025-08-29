@@ -12,7 +12,7 @@ index df4254c..dc83142 100644
 +    console.log(JSON.stringify(data));
 +}
 diff --git a/app/services/yahooService.js b/app/services/yahooService.js
-index e18dee7..0df0b47 100644
+index e18dee7..17ccdf9 100644
 --- a/app/services/yahooService.js
 +++ b/app/services/yahooService.js
 @@ -52,11 +52,12 @@ function getCurrentPrice(tickers) {
@@ -51,7 +51,7 @@ index e18dee7..0df0b47 100644
          data.push({ ticker: entity.symbol, shortName, price, change, changePercent, atDate });
        }
        resolve(data);
-@@ -127,24 +129,35 @@ function getHistoricalPrices(ticker, options) {
+@@ -127,24 +129,37 @@ function getHistoricalPrices(ticker, options) {
    });
  }
  
@@ -60,8 +60,10 @@ index e18dee7..0df0b47 100644
 +function getMarketStatus(entity) {
 +  if (entity.hasPrePostMarketData) {
 +    let state = entity.marketState.toLowerCase();
-+    if (state.includes('PRE')) return 'pre';
-+    if (state.includes('POST')) return 'post';
++    if (state.includes('pre') && Object.keys(entity).includes('preMarketPrice')) return 'pre';
++    if (state.includes('post') && Object.keys(entity).includes('postMarketPrice')) return 'post';
++    if (Object.keys(entity).includes('preMarketPrice')) return 'pre';
++    if (Object.keys(entity).includes('postMarketPrice')) return 'post';
 +    return 'regular';
 +  } else {
 +    return 'regular';
@@ -97,7 +99,7 @@ index e18dee7..0df0b47 100644
  }
  
  function getLongName(entity) {
-@@ -168,7 +181,9 @@ function getFiftyTwoWeekRange(entity) {
+@@ -168,7 +183,9 @@ function getFiftyTwoWeekRange(entity) {
  }
  
  function getMarketState(entity) {

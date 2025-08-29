@@ -59,11 +59,12 @@ in
   nixpkgs.overlays = [(final: prev: {
     keepmenu = prev.keepmenu.overrideAttrs (old: {
       patches = (old.patches or [ ]) ++ [ ./../patches/keepmenu-adaptive-typing.patch ];
+      postFixup = (old.postFixup or "") + ''
+        wrapProgram $out/bin/keepmenu --set PATH \
+            ${lib.makeBinPath (with pkgs; [ rofi xclip xdotool ])}
+      '';
     });
   })];
-
-  # Extra Xdotool dependency for Keepmenu autotyping.
-  home.packages = lib.mkIf (config.customization.persistence.kdbx != null) [ pkgs.xdotool ];
 
   # Registers Keepass database, Rofi, and adaptive autotype for Keepmenu.
   xdg.configFile."keepmenu/config.ini" = lib.mkIf (config.customization.persistence.kdbx != null) {
