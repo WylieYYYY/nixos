@@ -5,18 +5,18 @@
 
 buildNpmPackage rec {
   pname = "gitlab-ci-local";
-  version = "4.55.0";
+  version = "4.62.0";
 
   src = fetchFromGitHub {
     owner = "firecow";
     repo = pname;
     rev = version;
-    sha256 = "rfe2vvg6F4MzV/FN52cf31Ef0XlMGM+UpbSRq2vinsM=";
+    sha256 = "JcCfrrb/xAvILfHgnKoRxjWG4fvi4kVg0W+s+y25A6Y=";
   };
 
   patches = [ ./../../../patches/gitlab-ci-local-no-cleanup.patch ];
 
-  npmDepsHash = "sha256-uv0/pasytEKEhkQXhjh51YWPMaskTEb3w4vMaMpspmI=";
+  npmDepsHash = "sha256-J/my72RPPwg1r1t4vO3CgMnGDP7H/Cc3apToypaK1YI=";
 
   postFixup = ''
     wrapProgram $out/bin/gitlab-ci-local --set PATH \

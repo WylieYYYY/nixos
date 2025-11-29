@@ -32,8 +32,8 @@ in
       libadwaita = prev.libadwaita.overrideAttrs (old: {
         doCheck = false;
         patches = (old.patches or [ ]) ++ [(prev.fetchpatch {
-          url = "https://aur.archlinux.org/cgit/aur.git/plain/theming_patch.diff?h=libadwaita-without-adwaita-git&id=d98b5bc68b2eba95104ee36661af788701f43219";
-          sha256 = "3fQ0coWIK00FEngdAp97Cnd0PvHmBoFCxr7gb+AKpgQ=";
+          url = "https://aur.archlinux.org/cgit/aur.git/plain/theming_patch.diff?h=libadwaita-without-adwaita-git&id=9dca7c63f917a1daafc900c4c4cf114f97553ae6";
+          sha256 = "8PL8r+w+pakj+HJBC2ylAfwnb5z/Hwg7gHxQjtw7r6k=";
         })];
       });
     })

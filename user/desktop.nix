@@ -62,7 +62,7 @@ let
     (entry "Internet" ([
       (entry "LibreWolf" librewolf-unfocus)
     ] ++ lib.optionals (config.customization.persistence.piptube != null) [
-      (entry "PiPTube" (lib.getExe piptube))
+      (entry "PiPTube" piptube)
     ]))
   ] ++ lib.optionals (isolatedEntries != [ ]) [
     (entry "Isolated" isolatedEntries)
@@ -91,6 +91,9 @@ let
   autostart = let
     displaySettings = lib.concatStringsSep "\n" (lib.attrValues
         config.programs.autorandr.hooks.postswitch);
+    ibusWithRime = pkgs.ibus-with-plugins.override {
+      plugins = [ pkgs.ibus-engines.rime ];
+    };
   in with pkgs; ''
     ${displaySettings}
     ${lib.getExe' cbatticon "cbatticon"} &
@@ -99,6 +102,7 @@ let
     { sleep 2; ${lib.getExe volctl} & } &
     ${lib.getExe caffeine-ng} &
     ${lib.getExe' lightlocker "light-locker"} &
+    ${lib.getExe' ibusWithRime "ibus-daemon"} --daemonize
   '';
 
   # Keybinds that are valid everywhere, globally.

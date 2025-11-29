@@ -3,7 +3,7 @@
   # Patched home manager Nix expression.
   home-manager = { pkgs, fetchFromGitHub, ... }: pkgs.srcOnly rec {
     pname = "home-manager-patched";
-    version = "d0bbd221482c2713cccb80220f3c9d16a6e20a33";
+    version = "2217780c39169a9c77915200137550c2ef0fa974";
 
     stdenv = pkgs.stdenvNoCC;
 
@@ -11,7 +11,7 @@
       owner = "nix-community";
       repo = "home-manager";
       rev = version;
-      sha256 = "Qb84nbYFFk0DzFeqVoHltS2RodAYY5/HZQKE8WnBDsc=";
+      sha256 = "dhX2abFWxeXab3Aad4Pg1xGtn9W84/qetNXfmYUwktw=";
     };
 
     patches = [ /* Patch no longer necessary. */ ];

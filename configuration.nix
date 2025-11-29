@@ -125,7 +125,7 @@ in
 
   programs.dconf.enable = true;
 
-  services.logind.lidSwitch = "ignore";
+  services.logind.settings.Login.HandleLidSwitch = "ignore";
 
   services.xserver.enable = true;
   services.xserver.displayManager.lightdm.greeters.gtk = {

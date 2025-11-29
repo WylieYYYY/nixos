@@ -22,7 +22,7 @@ The configuration can be tested in a virtual machine on a system with Nix instal
 The password of the virtual machine is `password`.
 
 ### Setup
-1. Download NixOS installation medium from https://nixos.org.
+1. Download NixOS installation medium from [NixOS official site](https://nixos.org).
 2. Mount a tmpfs on `/mnt` and a persistent volume on `/mnt/nix`.
 3. Create directory `/mnt/nix/persist/boot/efi` and mount the EFI partition there.
 4. Connect to the Internet using `wpa_supplicant`.

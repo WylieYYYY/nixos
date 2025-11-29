@@ -70,26 +70,28 @@
 
   programs.git = {
     enable = true;
-    userEmail = config.customization.git.email;
-    userName = config.customization.git.username;
+    settings = {
+      user = lib.mkMerge [
+        (lib.mkIf (config.customization.git.email != null) { email = config.customization.git.email; })
+        (lib.mkIf (config.customization.git.username != null) { name = config.customization.git.username; })
+      ];
 
-    aliases = let
-      git-stash-except-staged = pkgs.writeShellScriptBin "git-stash-except-staged" ''
-        git stash push --staged
-        status=$?
-        git stash push --include-untracked
-        [ status -eq 0 ] && git stash pop --index stash@{1}
-      '';
-    in {
-      ax = "!${lib.getExe git-stash-except-staged}";
-      br = "branch";
-      co = "checkout";
-      l  = "log --oneline --graph --decorate --all";
-      st = "status";
-      undo = "reset --soft HEAD~1";
-    };
+      alias = let
+        git-stash-except-staged = pkgs.writeShellScriptBin "git-stash-except-staged" ''
+          git stash push --staged
+          status=$?
+          git stash push --include-untracked
+          [ status -eq 0 ] && git stash pop --index stash@{1}
+        '';
+      in {
+        ax = "!${lib.getExe git-stash-except-staged}";
+        br = "branch";
+        co = "checkout";
+        l  = "log --oneline --graph --decorate --all";
+        st = "status";
+        undo = "reset --soft HEAD~1";
+      };
 
-    extraConfig = {
       core.excludesFile = builtins.toString (pkgs.writeText "git-ignore"
           (lib.concatStringsSep "\n" [ ".direnv" ".envrc" "shell.nix" ]));
       credential.helper = "cache";
