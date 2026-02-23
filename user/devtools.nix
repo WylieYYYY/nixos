@@ -80,8 +80,7 @@
         git-stash-except-staged = pkgs.writeShellScriptBin "git-stash-except-staged" ''
           git stash push --staged
           status=$?
-          git stash push --include-untracked
-          [ status -eq 0 ] && git stash pop --index stash@{1}
+          [ $status -eq 0 ] && git stash push --include-untracked --message "$1" && git stash pop --index stash@{1}
         '';
       in {
         ax = "!${lib.getExe git-stash-except-staged}";
@@ -90,6 +89,7 @@
         l  = "log --oneline --graph --decorate --all";
         st = "status";
         undo = "reset --soft HEAD~1";
+        unstage = "restore --staged";
       };
 
       core.excludesFile = builtins.toString (pkgs.writeText "git-ignore"

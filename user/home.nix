@@ -33,14 +33,10 @@
   programs.autorandr = {
     enable = true;
     profiles = config.customization.autorandrProfiles { inherit lib pkgs; };
-    hooks.preswitch = {
-      "reset-warmth" = "${lib.getExe pkgs.redshift} -x";
-    };
     hooks.postswitch = {
       "refresh-otd-screens" = "${lib.getExe' pkgs.systemd "systemctl"} restart --user opentabletdriver.service";
       "change-brightness" = "${lib.getExe pkgs.brightnessctl} set 20%";
-      "change-warmth" = "${lib.getExe pkgs.redshift} -O 4000";
-      "change-background" = "${lib.getExe pkgs.nitrogen} --restore";
+      "change-warmth" = "${lib.getExe pkgs.redshift} -x && ${lib.getExe pkgs.redshift} -O 4000";
     } // (lib.optionalAttrs (config.customization.windowManager == "awesome") {
       "restart-awesome" = "${lib.getExe' pkgs.awesome "awesome-client"} 'awesome.restart()'";
     });

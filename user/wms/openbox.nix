@@ -12,6 +12,18 @@
 
 {
 
+  # Restores wallpaper when changing screens.
+  programs.autorandr.hooks.postswitch = lib.mkIf (config.customization.windowManager == "openbox") {
+    "change-background" = "${lib.getExe pkgs.nitrogen} --restore";
+  };
+
+  # Sets the wallpaper with a sensible zooming mode.
+  programs.nitrogen = lib.mkIf (config.customization.windowManager == "openbox" && config.customization.persistence.wallpaper != null) {
+    enable = true;
+    file = config.customization.persistence.wallpaper;
+    mode = "zoomed-fill";
+  };
+
   programs.openbox = lib.mkIf (config.customization.windowManager == "openbox") {
     enable = true;
     themePackages = [ pkgs.numix-gtk-theme ];

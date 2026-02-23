@@ -282,13 +282,6 @@ in
     ];
   };
 
-  # Sets the wallpaper with a sensible zooming mode.
-  programs.nitrogen = lib.mkIf (config.customization.persistence.wallpaper != null) {
-    enable = true;
-    file = config.customization.persistence.wallpaper;
-    mode = "zoomed-fill";
-  };
-
   # Defines associations so that no "Open With..." prompt is neccessary.
   custom.mimeApps = {
     enable = true;

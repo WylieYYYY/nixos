@@ -55,6 +55,7 @@ in
           app_menu = filteredAppMenu;
           global_application_keybinds = metaReplacedGlobalApplicationKeybinds;
           maximized_wm_classes = maximizedWmClasses;
+          wallpaper = config.customization.persistence.wallpaper;
         }))
         (pkgs.stdenv.mkDerivation {
           name = "awesome-snap";

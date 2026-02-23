@@ -14,6 +14,12 @@ awful.layout.layouts = {
     awful.layout.suit.floating,
 }
 
+if wm_common.wallpaper ~= null then
+    awful.screen.connect_for_each_screen(function(s)
+        gears.wallpaper.maximized(wm_common.wallpaper, s)
+    end)
+end
+
 local main_menu = awful.menu({ items = wm_common.app_menu })
 setup_tasklist(main_menu)
 
