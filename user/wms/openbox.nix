@@ -1,4 +1,4 @@
-{ appMenu, autostart, globalApplicationKeybinds, maximizedWmClasses, config, lib, pkgs, ... }:
+{ appMenu, autostart, globalApplicationKeybinds, maximizedWmClasses, clockLeftClickCommand, config, lib, pkgs, ... }:
 
 # Adds Openbox with its configurations.
 # Parameters:
@@ -8,6 +8,7 @@
 #   prefer string values for compatibility with other window manager.
 #   However, Openbox directive structures are acceptable.
 # - maximizedWmClasses: List of WM_CLASS,
+# - clockLeftClickCommand: The command to call when the clock is left clicked.
 #   windows with any of the classes will be maximized by default.
 
 {
@@ -18,9 +19,9 @@
   };
 
   # Sets the wallpaper with a sensible zooming mode.
-  programs.nitrogen = lib.mkIf (config.customization.windowManager == "openbox" && config.customization.persistence.wallpaper != null) {
+  programs.nitrogen = lib.mkIf (config.customization.windowManager == "openbox" && config.customization.persistence.wallpapers != [ ]) {
     enable = true;
-    file = config.customization.persistence.wallpaper;
+    file = builtins.elemAt config.customization.persistence.wallpapers 0;
     mode = "zoomed-fill";
   };
 
@@ -94,12 +95,7 @@
         launcher_item_app = null;
         time1_format = "%H:%M.%S";
         time2_format = "%Y-%m-%d";
-        clock_lclick_command = lib.getExe (pkgs.writeShellScriptBin "calendar" ''
-          ${lib.getExe pkgs.shellfront} -Tps 21x8 -g 3 -c 'echo -n \
-              "$(${lib.getExe' pkgs.ncurses "tput"} bold; \
-              ${lib.getExe' pkgs.expect "unbuffer"} cal | \
-              ${lib.getExe pkgs.lolcat} -ft -) "; sleep infinity'
-        '');
+        clock_lclick_command = clockLeftClickCommand;
       };
       iniString = builtins.readFile "${pkgs.tint2}/etc/xdg/tint2/tint2rc";
     };

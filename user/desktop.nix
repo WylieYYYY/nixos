@@ -99,7 +99,7 @@ let
     ${lib.getExe' cbatticon "cbatticon"} &
     ${lib.getExe' networkmanagerapplet "nm-applet"} &
     ${lib.getExe' blueman "blueman-applet"} &
-    { sleep 2; ${lib.getExe volctl} & } &
+    { sleep 2s; ${lib.getExe volctl} & } &
     ${lib.getExe caffeine-ng} &
     ${lib.getExe' lightlocker "light-locker"} &
     ${lib.getExe' ibusWithRime "ibus-daemon"} --daemonize
@@ -137,7 +137,16 @@ in
 {
 
   imports = let
-    wmArgs = args // { inherit appMenu autostart globalApplicationKeybinds maximizedWmClasses; };
+    calendar = lib.getExe (pkgs.writeShellScriptBin "calendar" ''
+      ${lib.getExe pkgs.shellfront} -Tps 21x8 -g 3 -c 'echo -n \
+          "$(${lib.getExe' pkgs.ncurses "tput"} bold; \
+          ${lib.getExe' pkgs.expect "unbuffer"} cal | \
+          ${lib.getExe pkgs.lolcat} -ft -) "; sleep infinity'
+    '');
+    wmArgs = args // {
+      inherit appMenu autostart globalApplicationKeybinds maximizedWmClasses;
+      clockLeftClickCommand = calendar;
+    };
   in [
     ./../modules/applications/mimeApps.nix
     ./../modules/applications/nitrogen.nix

@@ -19,7 +19,7 @@ let
   };
 
   persistenceModule = let
-    mkNullablePathOption = _: description: lib.mkOption {
+    mkNullablePathOption = description: lib.mkOption {
       inherit description;
       type = lib.types.nullOr lib.types.path;
       default = null;
@@ -37,13 +37,21 @@ let
       description = "Other files to be persisted in the impermanence module format.";
     };
   in lib.types.submodule {
-    options = ((builtins.mapAttrs mkNullablePathOption {
+    options = ((builtins.mapAttrs (lib.const mkNullablePathOption) {
       browser = "Directory for persisting extensions.json, extension-settings.json.";
       direnv = "Directory for persisting Direnv allow records.";
       kdbx = "Default Keepass file for password managers' quick access.";
       piptube = "PiPTube JAR file.";
-      wallpaper = "Wallpaper image file.";
-    }) // { inherit other; });
+    }) // {
+      inherit other;
+
+      wallpapers = lib.mkOption {
+        description = "Wallpaper image files.";
+        type = lib.types.listOf lib.types.path;
+        default = [ ];
+        apply = builtins.map builtins.toString;
+      };
+    });
   };
 
   userModule = lib.types.submodule {

@@ -4,7 +4,7 @@
 
 stdenv.mkDerivation rec {
   pname = "shellfront";
-  version = "c091997f724e89a86f600ae9abc3ac944985b193";
+  version = "5e3b4c4d935d21afe057104a6ede6625cce147ee";
 
   nativeBuildInputs = with pkgs; [ autoreconfHook pkg-config ];
   buildInputs = with pkgs; [ gtk3 vte ];
@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
     owner = "WylieYYYY";
     repo = pname;
     rev = version;
-    sha256 = "4D2uNfoePDIWD2X/Jv+UCtBxX3Gl2hXPmE/sAR+iRPk=";
+    sha256 = "vD4gh/NCNGxx1WzNvnk//b77foviN1KBinARca5urq0=";
   };
 
   buildPhase = ''

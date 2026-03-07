@@ -1,4 +1,4 @@
-{ appMenu, autostart, globalApplicationKeybinds, maximizedWmClasses, config, lib, pkgs, ... }:
+{ appMenu, autostart, globalApplicationKeybinds, maximizedWmClasses, clockLeftClickCommand, config, lib, pkgs, ... }:
 
 # Adds Awesome with Lua libraries and source files.
 # Reuses the same configuration structures as the Openbox configurations.
@@ -8,6 +8,7 @@
 # - globalApplicationKeybinds: Attribute set of keybinds to commands,
 #   accepts only string values.
 # - maximizedWmClasses: List of WM_CLASS,
+# - clockLeftClickCommand: The command to call when the clock is left clicked.
 #   windows with any of the classes will be maximized by default.
 
 let
@@ -55,7 +56,8 @@ in
           app_menu = filteredAppMenu;
           global_application_keybinds = metaReplacedGlobalApplicationKeybinds;
           maximized_wm_classes = maximizedWmClasses;
-          wallpaper = config.customization.persistence.wallpaper;
+          wallpapers = config.customization.persistence.wallpapers;
+          clock_lclick_command = clockLeftClickCommand;
         }))
         (pkgs.stdenv.mkDerivation {
           name = "awesome-snap";

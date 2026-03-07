@@ -14,14 +14,15 @@ awful.layout.layouts = {
     awful.layout.suit.floating,
 }
 
-if wm_common.wallpaper ~= null then
+if next(wm_common.wallpapers) ~= null then
     awful.screen.connect_for_each_screen(function(s)
-        gears.wallpaper.maximized(wm_common.wallpaper, s)
+        local wallpaper = wm_common.wallpapers[s.index % #wm_common.wallpapers + 1]
+        gears.wallpaper.maximized(wallpaper, s)
     end)
 end
 
 local main_menu = awful.menu({ items = wm_common.app_menu })
-setup_tasklist(main_menu)
+setup_tasklist(main_menu, wm_common.clock_lclick_command)
 
 root.buttons(gears.table.join(awful.button({}, 3, function()
     main_menu:toggle()

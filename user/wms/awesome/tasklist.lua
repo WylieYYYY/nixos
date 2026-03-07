@@ -26,7 +26,7 @@ local function focus_last_in_history(screen, clients)
     end
 end
 
-return function(main_menu)
+return function(main_menu, clock_lclick_command)
     awful.screen.connect_for_each_screen(function(s)
         awful.tag({ "1", "2" }, s, awful.layout.layouts[1])
 
@@ -95,6 +95,17 @@ return function(main_menu)
             end)
         ))
 
+        local tasklist_textclocks = {
+            wibox.widget.textclock('<span size="large" weight="bold">%H:%M</span>'),
+            wibox.widget.textclock('%Y-%m-%d'),
+        }
+
+        for _, tasklist_textclock in ipairs(tasklist_textclocks) do
+            tasklist_textclock:buttons(gears.table.join(awful.button({}, 1, function(c)
+                awful.spawn(clock_lclick_command)
+            end)))
+        end
+
         s.wibox:setup({
             layout = wibox.layout.align.horizontal,
             nil,
@@ -112,8 +123,8 @@ return function(main_menu)
                 },
                 {
                     layout = wibox.layout.fixed.vertical,
-                    wibox.widget.textclock('<span size="large" weight="bold">%H:%M</span>'),
-                    wibox.widget.textclock("%Y-%m-%d"),
+                    tasklist_textclocks[1],
+                    tasklist_textclocks[2],
                 },
             },
         })
