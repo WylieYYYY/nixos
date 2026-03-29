@@ -58,7 +58,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home.file."${dataPath}/${cubicle.meta.addonId}/storage.js".text = builtins.toJSON ({
+    home.file."${dataPath}/${cubicle.addonId}/storage.js".text = builtins.toJSON ({
       version = [ 0 1 0 ];
     } // (
       if cfg.preferences == null

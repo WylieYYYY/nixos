@@ -54,6 +54,15 @@ in
     extra-substituters."${lib.concatStringsSep " " config.customization.global.trustedSubstituters}" = true;
   };
 
+  # Disables the language selection popup.
+  xdg.configFile."nomacs/Image Lounge.conf".text = ''
+    [General]
+    firstTime=false
+
+    [AppSettings]
+    firstTime.nomacs.3=false
+  '';
+
   # Stops VLC from asking for network metadata access.
   # Don't need metadata for media, and do not resize when the video changes.
   xdg.configFile."vlc/vlcrc".text = lib.generators.toINI { } {

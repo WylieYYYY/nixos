@@ -21,7 +21,7 @@ let
 
   # Predicatable UUIDs for extensions, allows for setting new tab page.
   extensionUuidMap = let
-    addonIds = builtins.map (extension: extension.meta.addonId) (immutableExtensions ++ mutableExtensions);
+    addonIds = builtins.map (extension: extension.addonId) (immutableExtensions ++ mutableExtensions);
     # randomly generated UUID namespace.
     uuidNamespace = "aefb136e-fa1f-40f4-9f8b-f2e742e5460e";
   in lib.genAttrs addonIds (addonId:
@@ -49,16 +49,16 @@ in
           "${config.customization.persistence.browser}/extensions.json";
     };
     # Symlink for building and reloading Cubicle extension.
-    "extensions/${cubicle.meta.addonId}.xpi" = lib.mkIf (config.customization.useCubicleExtension) {
+    "extensions/${cubicle.addonId}.xpi" = lib.mkIf (config.customization.useCubicleExtension) {
       source = config.lib.file.mkOutOfStoreSymlink "${config.customization.persistence.browser}/cubicle.xpi";
     };
     # Stops 7TV popup everytime the website is launched.
-    "browser-extension-data/${seventv.meta.addonId}/storage.js".text = builtins.toJSON {
+    "browser-extension-data/${seventv.addonId}/storage.js".text = builtins.toJSON {
       seen_onboarding = true;
       upgraded = true;
     };
     # Adds annoyances and cookie notices filters.
-    "browser-extension-data/${nur.ublock-origin.meta.addonId}/storage.js".text = builtins.toJSON {
+    "browser-extension-data/${nur.ublock-origin.addonId}/storage.js".text = builtins.toJSON {
       selectedFilterLists = [
         "user-filters"
         "ublock-filters"
@@ -104,13 +104,13 @@ in
 
     profiles."${profileName}" = rec {
       settings = let
-        tridactylUuid = extensionUuidMap."${nur.tridactyl.meta.addonId}";
+        tridactylUuid = extensionUuidMap."${nur.tridactyl.addonId}";
         # Escapes the extension IDs for UI customization option.
         escapeAddonId = extension: lib.concatStrings (builtins.map (segment:
           if builtins.isList segment
           then builtins.elemAt segment 0
           else lib.optionalString (segment != "") "_"
-        ) (builtins.split "([0-9A-Za-z-]+)" extension.meta.addonId)) + "-browser-action";
+        ) (builtins.split "([0-9A-Za-z-]+)" extension.addonId)) + "-browser-action";
         uiCustomization = {
           currentVersion = 19;
           placements = {

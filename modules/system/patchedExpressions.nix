@@ -18,10 +18,9 @@
   };
 
   # Patched NUR expressions from Rycee.
-  # - Adds addon ID to the package metadata.
   nur-rycee = { pkgs, fetchFromGitLab, ... }: pkgs.srcOnly rec {
     pname = "nur-rycee-patched";
-    version = "60f50437003e17137a871686dfa3fc4291edd5e5";
+    version = "c73146d00a2a01e2ac844ceed9640e0f314a5dda";
 
     stdenv = pkgs.stdenvNoCC;
 
@@ -29,10 +28,10 @@
       owner = "rycee";
       repo = "nur-expressions";
       rev = version;
-      sha256 = "6PNBLb/YXVlx2YaDqtljQYpk2MlE0VRjGXcEg1RN/qw=";
+      sha256 = "cqbRdYEmO8FNoaUtoc6+GLR4EGU1f24cGJiQUPJJmxI=";
     };
 
-    patches = [ ./../../patches/nur-firefox-addon-id.patch ];
+    patches = [ /* Patch no longer necessary. */ ];
   };
 
 }

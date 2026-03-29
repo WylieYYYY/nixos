@@ -25,10 +25,7 @@
 
   home.persistence = config.customization.persistence.other;
 
-  services.autorandr = {
-    enable = true;
-    ignoreLid = true;
-  };
+  services.autorandr.enable = true;
 
   programs.autorandr = {
     enable = true;
@@ -38,7 +35,7 @@
       "change-brightness" = "${lib.getExe pkgs.brightnessctl} set 20%";
       "change-warmth" = "${lib.getExe pkgs.redshift} -x && ${lib.getExe pkgs.redshift} -O 4000";
     } // (lib.optionalAttrs (config.customization.windowManager == "awesome") {
-      "restart-awesome" = "${lib.getExe' pkgs.awesome "awesome-client"} 'awesome.restart()'";
+      "restart-awesome" = "{ sleep 2s; ${lib.getExe' pkgs.awesome "awesome-client"} 'awesome.restart()' & } &";
     });
   };
 

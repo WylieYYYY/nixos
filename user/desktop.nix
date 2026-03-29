@@ -115,6 +115,7 @@ let
     "Print" = lib.getExe (pkgs.writeShellScriptBin "copy-screenshot" ''
       sleep 0.2s
       ${lib.getExe scrot} --select --file - | \
+          ${lib.getExe' pkgs.coreutils "tee"} ${config.home.homeDirectory}/screenshot.png | \
           ${lib.getExe xclip} -selection clipboard -target image/png
     '');
     "W-f" = "${lib.getExe librewolf-unfocus}";
@@ -316,8 +317,8 @@ in
       "application/x-krita" = krita;
       "application/x-tar" = file-roller;
       "application/zip" = file-roller;
-      "image/jpeg" = feh;
-      "image/png" = feh;
+      "image/jpeg" = nomacs;
+      "image/png" = nomacs;
       "text/plain" = pair "org.xfce.mousepad" xfce.mousepad;
       "video/mp4" = pair "vlc-focus" vlcDesktopItem;
       "video/webm" = pair "vlc-focus" vlcDesktopItem;
