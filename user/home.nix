@@ -24,6 +24,7 @@
   home.file."mnt/.keep".text = "";
 
   home.persistence = config.customization.persistence.other;
+  services.udiskie.enable = true;
 
   services.autorandr.enable = true;
 

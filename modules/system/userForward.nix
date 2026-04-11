@@ -17,7 +17,7 @@ pkgs.writeShellScriptBin "${user}-forwarded" ''
   ${lib.getExe' pkgs.pulseaudio "pactl"} load-module module-native-protocol-tcp port=${portString}
   cd /
   sudo --user ${escape user} PATH=/home/${escape user}/.nix-profile/bin\
-      PULSE_SERVER=tcp:127.0.0.1:${portString} ${command} $@
+      PULSE_SERVER=tcp:127.0.0.1:${portString} ${lib.getExe' pkgs.dbus "dbus-launch"} ${command} $@
   ${lib.getExe pkgs.xorg.xhost} -si:localuser:${escape user}
   ${lib.getExe' pkgs.pulseaudio "pactl"} unload-module module-native-protocol-tcp
 ''

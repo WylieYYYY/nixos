@@ -29,13 +29,15 @@ in
   config.nixpkgs.overlays = [
     (final: prev: lib.updateManyAttrsByPath (updates prev) prev)
     (final: prev: {
-      libadwaita = prev.libadwaita.overrideAttrs (old: {
-        doCheck = false;
-        patches = (old.patches or [ ]) ++ [(prev.fetchpatch {
-          url = "https://aur.archlinux.org/cgit/aur.git/plain/theming_patch.diff?h=libadwaita-without-adwaita-git&id=9dca7c63f917a1daafc900c4c4cf114f97553ae6";
-          sha256 = "8PL8r+w+pakj+HJBC2ylAfwnb5z/Hwg7gHxQjtw7r6k=";
-        })];
-      });
+      file-roller = prev.file-roller.override {
+        libadwaita = prev.libadwaita.overrideAttrs (old: {
+          doCheck = false;
+          patches = (old.patches or [ ]) ++ [(prev.fetchpatch {
+            url = "https://aur.archlinux.org/cgit/aur.git/plain/theming_patch.diff?h=libadwaita-without-adwaita-git&id=9dca7c63f917a1daafc900c4c4cf114f97553ae6";
+            sha256 = "8PL8r+w+pakj+HJBC2ylAfwnb5z/Hwg7gHxQjtw7r6k=";
+          })];
+        });
+      };
     })
   ] ++ config.customization.global.nixpkgsOverlays;
 }

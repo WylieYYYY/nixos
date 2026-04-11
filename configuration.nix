@@ -82,6 +82,11 @@ in
     randomEncryption.enable = true;
   }];
 
+  services.udisks2 = {
+    enable = true;
+    mountOnMedia = true;
+  };
+
   # Performance softwares.
   services.earlyoom.enable = true;
   services.tlp.enable = true;

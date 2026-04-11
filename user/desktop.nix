@@ -69,6 +69,7 @@ let
   ] ++ [
     (entry "Multimedia" [
       (entry "Krita" (lib.getExe' krita "krita"))
+      (entry "TreeSheets" treesheets)
       (entry "VLC" (lib.getExe' vlc "vlc"))
     ])
     (entry "Work" ([
@@ -295,7 +296,7 @@ in
   # Defines associations so that no "Open With..." prompt is neccessary.
   custom.mimeApps = {
     enable = true;
-    customMimeTypes = [ "kdbx" "xopp" ];
+    customMimeTypes = [ "cts" "kdbx" "xopp" ];
     defaultApplications = let
       pair = lib.nameValuePair;
       vlcDesktopItem = pkgs.makeDesktopItem {
@@ -312,6 +313,7 @@ in
       "application/pdf" = config.programs.librewolf.finalPackage;
       "application/vnd.appimage" = appimage-run;
       "application/vnd.oasis.opendocument.spreadsheet" = pair "calc" libreoffice-still;
+      "application/x-extension-cts" = treesheets;
       "application/x-extension-kdbx" = keepassxc;
       "application/x-extension-xopp" = xournalpp;
       "application/x-krita" = krita;

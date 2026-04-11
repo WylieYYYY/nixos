@@ -29,6 +29,17 @@
       set fish_greeting
     '';
 
+    # Rebuilds system configurations and restart Home Manager and Awesome as required.
+    shellAbbrs.rebuild = {
+      expansion = ("sudo bash -c " + lib.escapeShellArg (lib.concatStringsSep " && " [
+        ''nixos-rebuild switch %''
+        ''systemctl restart home-manager-${config.home.username}.service''
+      ])) + lib.optionalString (
+        config.customization.windowManager == "awesome"
+      ) " && { ${lib.getExe' pkgs.awesome "awesome-client"} 'awesome.restart()' 2>/dev/null || true }";
+      setCursor = true;
+    };
+
     # Creates a temporary private shell with the given packages.
     shellAbbrs.try = lib.concatStringsSep " " [
       ''${lib.getExe' pkgs.nix "nix-shell"} --command''

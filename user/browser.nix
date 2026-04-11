@@ -136,7 +136,7 @@ in
         "browser.uiCustomization.state" = uiCustomization;
         "browser.uidensity" = 1;
         "extensions.webextensions.uuids" = extensionUuidMap;
-        "security.OCSP.enabled" = 0;
+        "webgl.disabled" = false;
         "xpinstall.signatures.required" = false;
 
         "places.history.enabled" = false;
