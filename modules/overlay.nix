@@ -28,8 +28,8 @@ in
 {
   config.nixpkgs.overlays = [
     (final: prev: lib.updateManyAttrsByPath (updates prev) prev)
-    (final: prev: {
-      file-roller = prev.file-roller.override {
+    (final: prev: let
+      libadwaitaOverride = package: package.override {
         libadwaita = prev.libadwaita.overrideAttrs (old: {
           doCheck = false;
           patches = (old.patches or [ ]) ++ [(prev.fetchpatch {
@@ -38,6 +38,8 @@ in
           })];
         });
       };
+    in {
+      file-roller = libadwaitaOverride prev.file-roller;
     })
   ] ++ config.customization.global.nixpkgsOverlays;
 }

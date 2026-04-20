@@ -59,6 +59,7 @@ in
     "/home/${name}" = {
       device = "none";
       fsType = "tmpfs";
+      neededForBoot = true;
       options = [
         "mode=700" "uid=${builtins.toString (1000 + index)}"
         "gid=${builtins.toString config.users.groups.users.gid}"

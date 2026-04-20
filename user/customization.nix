@@ -1,4 +1,4 @@
-{ bareSubmodule, home-manager-repo, impermanence-repo, config, lib, pkgs, ... }:
+{ bareSubmodule, home-manager-repo, config, lib, pkgs, ... }:
 
 # Modulized Home Manager configuration customizations.
 
@@ -29,10 +29,8 @@ let
         else builtins.toString path
       );
     };
-    other = let
-      homeManagerImpermanenceModule = pkgs.callPackage "${impermanence-repo}/home-manager.nix" { };
-    in lib.mkOption {
-      type = homeManagerImpermanenceModule.options.home.persistence.type;
+    other = lib.mkOption {
+      type = lib.types.attrsOf lib.types.anything;
       default = { };
       description = "Other files to be persisted in the impermanence module format.";
     };
@@ -42,6 +40,7 @@ let
       direnv = "Directory for persisting Direnv allow records.";
       kdbx = "Default Keepass file for password managers' quick access.";
       piptube = "PiPTube JAR file.";
+      syncthing = "Directory to be shared to all devices provided.";
     }) // {
       inherit other;
 
@@ -104,6 +103,11 @@ let
         type = lib.types.listOf lib.types.str;
         default = [ ];
         description = "Domain regular expressions that are excluded from Tridactyl's no mouse mode.";
+      };
+      syncthingIds = lib.mkOption {
+        type = lib.types.attrsOf lib.types.str;
+        default = { };
+        description = "Attribute set of device names to Syncthing IDs.";
       };
       trackedTickers = lib.mkOption {
         type = with lib.types; listOf str;

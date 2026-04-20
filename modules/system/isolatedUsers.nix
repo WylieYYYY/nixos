@@ -75,6 +75,7 @@ in
       "${cfg.isolated.isolatedUserHomeBaseDir}/${name}" = {
         device = "none";
         fsType = "tmpfs";
+        neededForBoot = true;
         options = [
           "mode=770"
           "uid=${builtins.toString cfg.users."${name}".uid}"

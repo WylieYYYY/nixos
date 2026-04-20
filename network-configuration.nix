@@ -60,24 +60,4 @@
     '';
   };
 
-  # Sensible file permission for synching files with service user.
-  systemd.services.syncthing.serviceConfig.UMask = "0002";
-
-  # Syncthing with predefined folder shared to all devices.
-  services.syncthing = lib.mkIf (config.customization.global.persistence.syncthing != null) {
-    enable = true;
-    overrideDevices = true;
-    overrideFolders = true;
-    relay.enable = false;
-    settings = {
-      devices = lib.mkMerge (lib.mapAttrsToList (name: value:
-        { "${name}".id = value; }
-      ) config.customization.global.network.syncthingIds);
-      folders.sync = {
-        path = config.customization.global.persistence.syncthing;
-        devices = builtins.attrNames config.customization.global.network.syncthingIds;
-      };
-    };
-  };
-
 }

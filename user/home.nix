@@ -26,6 +26,22 @@
   home.persistence = config.customization.persistence.other;
   services.udiskie.enable = true;
 
+  # Syncthing with predefined folder shared to all devices.
+  services.syncthing = lib.mkIf (config.customization.persistence.syncthing != null) {
+    enable = true;
+    overrideDevices = true;
+    overrideFolders = true;
+    settings = {
+      devices = lib.mkMerge (lib.mapAttrsToList (name: value:
+        { "${name}".id = value; }
+      ) config.customization.syncthingIds);
+      folders.sync = {
+        path = config.customization.persistence.syncthing;
+        devices = builtins.attrNames config.customization.syncthingIds;
+      };
+    };
+  };
+
   services.autorandr.enable = true;
 
   programs.autorandr = {

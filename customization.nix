@@ -1,4 +1,4 @@
-{ home-manager-repo, impermanence-repo, config, lib, pkgs, ... }:
+{ home-manager-repo, config, lib, pkgs, ... }:
 
 # Modulized NixOS configuration customizations.
 
@@ -11,7 +11,7 @@ let
   };
 
   userModule = pkgs.callPackage ./user/customization.nix {
-    inherit home-manager-repo impermanence-repo;
+    inherit home-manager-repo;
     bareSubmodule = true;
   };
 
@@ -56,7 +56,6 @@ let
       };
       machineState = mkNullablePathOption "Directory for machine-specific states such as authentication.";
       root = mkNullablePathOption "Directory for system user data.";
-      syncthing = mkNullablePathOption "Directory to be shared to all devices provided.";
       wallpaper = mkNullablePathOption "Display manager background image file.";
     };
   };
@@ -112,11 +111,6 @@ let
               type = lib.types.str;
               default = "nixos";
               description = "Host name to be registered.";
-            };
-            syncthingIds = lib.mkOption {
-              type = lib.types.attrsOf lib.types.str;
-              default = { };
-              description = "Attribute set of device names to Syncthing IDs.";
             };
           };
         };

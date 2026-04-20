@@ -5,10 +5,8 @@ args@{ config, lib, pkgs, ... }:
 let
   home-manager-repo = (import <nixpkgs> { }).callPackage
       (import ./modules/system/patchedExpressions.nix).home-manager { };
-  impermanence-repo = builtins.fetchTarball {
-    url = "https://github.com/nix-community/impermanence/archive/123e94200f63952639492796b8878e588a4a2851.tar.gz";
-    sha256 = "07c146m0i47a0f9gajhh8h9l5ndy5744dmvbbqhvm28pnl319qmd";
-  };
+  impermanence-repo = (import <nixpkgs> { }).callPackage
+      (import ./modules/system/patchedExpressions.nix).impermanence { };
 in
 
 {
@@ -36,7 +34,7 @@ in
     ./graphics-configuration.nix
     ./network-configuration.nix
     (import ./user-configuration.nix (args // { inherit home-manager-repo impermanence-repo; }))
-    (import ./customization.nix (args // { inherit home-manager-repo impermanence-repo; }))
+    (import ./customization.nix (args // { inherit home-manager-repo; }))
     ./modules/overlay.nix
     ./persist.nix
   ];
@@ -111,7 +109,6 @@ in
           "/var/lib/bluetooth"
           "/var/lib/iwd"
           "/var/lib/nixos"
-          "/var/lib/syncthing"
           "/var/lib/systemd/coredump"
           "/var/log"
         ];

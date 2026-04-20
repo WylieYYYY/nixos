@@ -1,7 +1,16 @@
 diff --git a/snap.lua b/snap.lua
-index b1a115e..41b12a3 100644
+index b1a115e0..00f69cb3 100644
 --- a/snap.lua
 +++ b/snap.lua
+@@ -24,7 +24,7 @@ local capi = {
+ }
+
+ local module = {
+-    default_distance = 8
++    default_distance = 16
+ }
+
+ local placeholder_w = nil
 @@ -72,6 +72,9 @@ local function show_placeholder(geo)
  end
 
@@ -12,7 +21,31 @@ index b1a115e..41b12a3 100644
      return aplace.scale
          + aplace[snap]
          + (
-@@ -138,6 +141,11 @@ local function apply_areasnap(c, args)
+@@ -83,18 +86,19 @@ local function detect_screen_edges(c, snap)
+     local coords = capi.mouse.coords()
+
+     local sg = c.screen.geometry
++    local sa = c.screen.workarea
+
+     local v, h = nil
+
+-    if math.abs(coords.x) <= snap + sg.x and coords.x >= sg.x then
++    if coords.x <= snap + sa.x and coords.x >= sg.x then
+         h = "left"
+-    elseif math.abs((sg.x + sg.width) - coords.x) <= snap then
++    elseif coords.x <= sg.x + sg.width and coords.x >= sa.x + sa.width - snap then
+         h = "right"
+     end
+
+-    if math.abs(coords.y) <= snap + sg.y and coords.y >= sg.y then
++    if coords.y <= snap + sa.y and coords.y >= sg.y then
+         v = "top"
+-    elseif math.abs((sg.y + sg.height) - coords.y) <= snap then
++    elseif coords.y <= sg.y + sg.height and coords.y >= sa.y + sa.height - snap then
+         v = "bottom"
+     end
+
+@@ -138,6 +142,11 @@ local function apply_areasnap(c, args)
 
      placeholder_w.visible = false
 
@@ -24,3 +57,12 @@ index b1a115e..41b12a3 100644
      return build_placement(current_snap, current_axis)(c,{
          to_percent     = 0.5,
          honor_workarea = true,
+@@ -253,7 +262,7 @@ resize.add_move_callback(function(c, geo, args)
+     -- Screen edge snapping (areosnap)
+     if (module.edge_enabled ~= false)
+       and args and (args.snap == nil or args.snap) then
+-        detect_areasnap(c, 16)
++        detect_areasnap(c, 32)
+     end
+
+     -- Snapping between clients

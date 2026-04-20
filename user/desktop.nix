@@ -61,6 +61,7 @@ let
     ])
     (entry "Internet" ([
       (entry "LibreWolf" librewolf-unfocus)
+      (entry "Liferea" (lib.getExe' liferea "liferea"))
     ] ++ lib.optionals (config.customization.persistence.piptube != null) [
       (entry "PiPTube" piptube)
     ]))
@@ -133,7 +134,14 @@ let
   };
 
   # Windows with the listed WM_CLASS should be maximized by default.
-  maximizedWmClasses = [ "Com.github.xournalpp.xournalpp" "librewolf" "Pcmanfm" "Pulsar" "VSCodium" ];
+  maximizedWmClasses = [
+    "Com.github.xournalpp.xournalpp"
+    "librewolf"
+    "Net.sourceforge.liferea"
+    "Pcmanfm"
+    "Pulsar"
+    "VSCodium"
+  ];
 in
 
 {
