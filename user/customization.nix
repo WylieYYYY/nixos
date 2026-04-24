@@ -104,6 +104,11 @@ let
         default = [ ];
         description = "Domain regular expressions that are excluded from Tridactyl's no mouse mode.";
       };
+      ownedPorts = lib.mkOption {
+        type = lib.types.listOf lib.types.int;
+        default = [ ];
+        description = "Ports to be blocked from other users.";
+      };
       syncthingIds = lib.mkOption {
         type = lib.types.attrsOf lib.types.str;
         default = { };

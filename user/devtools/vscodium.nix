@@ -7,38 +7,40 @@
   programs.vscode = lib.mkIf (config.customization.codeEditor == "vscodium") {
     enable = true;
     package = pkgs.vscodium;
-    enableUpdateCheck = false;
-    enableExtensionUpdateCheck = false;
 
-    userSettings = {
-      "files.enableTrash" = false;
-      "files.trimTrailingWhitespace" = true;
-      "git.terminalAuthentication" = false;
-      "javascript.validate.enable" = false;
-      "js/ts.implicitProjectConfig.checkJs" = true;
-      "nixEnvSelector.nixFile" = "\${workspaceRoot}/shell.nix";
-      "security.workspace.trust.enabled" = false;
-      "terminal.integrated.sendKeybindingsToShell" = true;
-      "typescript.validate.enable" = false;
-      "workbench.colorTheme" = "Dracula";
-      "workbench.sideBar.location" = "right";
-      "workbench.welcome.enabled" = false;
-      "vim.normalModeKeyBindings" = [
-        { before = [ "t" ]; commands = [ "workbench.action.quickOpen" ]; }
-        { before = [ "J" ]; commands = [ ":tabprevious" ]; }
-        { before = [ "K" ]; commands = [ ":tabnext" ]; }
+    profiles.default = {
+      enableUpdateCheck = false;
+      enableExtensionUpdateCheck = false;
+
+      keybindings = [
+        { key = "ctrl+shift+t"; command = "workbench.action.terminal.new"; }
       ];
-      "vim.useSystemClipboard" = true;
+
+      userSettings = {
+        "editor.bracketPairColorization.enabled" = false;
+        "files.enableTrash" = false;
+        "files.insertFinalNewline" = true;
+        "files.trimTrailingWhitespace" = true;
+        "git.terminalAuthentication" = false;
+        "javascript.validate.enable" = false;
+        "js/ts.implicitProjectConfig.checkJs" = true;
+        "nixEnvSelector.nixFile" = "\${workspaceRoot}/shell.nix";
+        "security.workspace.trust.enabled" = false;
+        "terminal.integrated.defaultLocation" = "editor";
+        "terminal.integrated.sendKeybindingsToShell" = true;
+        "typescript.validate.enable" = false;
+        "workbench.colorTheme" = "Monokai";
+        "workbench.welcome.enabled" = false;
+      };
+
+      extensions = with pkgs.vscode-extensions; [
+        bbenoist.nix
+        ms-azuretools.vscode-docker
+        rust-lang.rust-analyzer
+        arrterian.nix-env-selector
+      ] ++ (pkgs.callPackage ./../../modules/applications/extensions/vscode-extras.nix { });
     };
 
-    extensions = with pkgs.vscode-extensions; [
-      bbenoist.nix
-      dracula-theme.theme-dracula
-      ms-azuretools.vscode-docker
-      rust-lang.rust-analyzer
-      vscodevim.vim
-      arrterian.nix-env-selector
-    ] ++ (pkgs.callPackage ./../../modules/applications/extensions/vscode-extras.nix { });
     mutableExtensionsDir = false;
   };
 

@@ -8,6 +8,7 @@
   home.homeDirectory = "/home/${username}";
 
   imports = [
+    ./../modules/system/homeDirectory.nix
     ./../modules/overlay.nix
     ./annoyance.nix
     ./desktop.nix
@@ -16,12 +17,16 @@
   # Caches patched NUR Nix expression to prevent refetch.
   home.file.".nix-gc-roots/overlay".text = let
     patchedExpressions = import ./../modules/system/patchedExpressions.nix;
-  in builtins.toString (pkgs.callPackage patchedExpressions.nur-rycee { });
+  in ''
+    ${pkgs.callPackage patchedExpressions.home-manager { }}
+    ${pkgs.callPackage patchedExpressions.impermanence { }}
+    ${pkgs.callPackage patchedExpressions.nur-rycee { }}
+  '';
 
   home.packages = with pkgs; [ curl gocryptfs sshfs ];
 
   # Makes a convenient mount point for FUSE.
-  home.file."mnt/.keep".text = "";
+  home.directory."mnt" = { };
 
   home.persistence = config.customization.persistence.other;
   services.udiskie.enable = true;

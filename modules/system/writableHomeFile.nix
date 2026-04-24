@@ -23,6 +23,7 @@ let
 in
 
 {
+
   options.home.writableFile = lib.mkOption {
     type = lib.types.attrsOf fileModule;
     default = { };
@@ -42,4 +43,5 @@ in
       ${file} "$HOME"/${escapedName}
     '';
   }) cfg);
+
 }

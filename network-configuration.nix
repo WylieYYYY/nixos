@@ -36,9 +36,16 @@
 
   # Firewall with additional entries for offline application isolation.
   networking.firewall.checkReversePath = false;
-  networking.nftables = {
+  networking.nftables = let
+    userOwnedPortPairs = lib.flatten (lib.mapAttrsToList (name: value:
+      builtins.map (port:
+        lib.nameValuePair (builtins.toString config.users.users."${name}".uid) (builtins.toString port)
+      ) value.ownedPorts
+    ) config.customization.users);
+    ownedPortRuleTemplate = entry: "meta l4proto {tcp,udp} skuid != ${entry.name} th dport ${entry.value} drop;";
+  in {
     enable = true;
-    preCheckRuleset = "sed 's/skuid [^ ]*/skuid nobody/g' -i ruleset.conf";
+    preCheckRuleset = "sed 's/skuid \\(!= \\)\\?[^ ]*/skuid \\1nobody/g' -i ruleset.conf";
     ruleset = ''
       table inet filter {
         chain rpfilter {
@@ -50,7 +57,7 @@
         }
         chain input {
           type filter hook input priority filter;
-          meta l4proto {tcp,udp} th dport 8384 drop comment "syncthing";
+          ${lib.concatStringsSep "\n" (builtins.map ownedPortRuleTemplate userOwnedPortPairs)}
         }
         chain output {
           type filter hook output priority filter;

@@ -262,19 +262,26 @@ in
   # Uses Pipewire native volume mixer.
   dconf.settings."apps/volctl".mixer-command = lib.getExe pkgs.pwvucontrol;
 
-  # Uses big pen icon and highlighting for higher visibility.
+  # Uses gray big pen with icon and highlighting for higher visibility.
   # PDF template changed to get rid of the "_annotated" suffix.
   xdg.configFile."xournalpp/settings.xml".source = xmlAttrset.createOrdered rec {
     list = let
-      entry = name: value: lib.nameValuePair "property" {
-        "@name" = name;
-        "@value" = value;
-      };
-    in lib.attrsets.mapAttrsToList entry {
-      stylusCursorType = "big";
-      highlightPosition = "true";
-      defaultPdfExportName = "%{name}";
-    };
+      entry = tag: name: attrs: subnodes: lib.nameValuePair tag ([
+        (lib.nameValuePair "@name" name)
+      ] ++ (lib.mapAttrsToList (name: lib.nameValuePair "@${name}") attrs) ++ subnodes);
+    in (lib.mapAttrsToList (name: lib.flip (entry "property" name) [ ]) {
+      stylusCursorType.value = "big";
+      highlightPosition.value = "true";
+      defaultPdfExportName.value = "%{name}";
+    }) ++ [
+      (entry "data" "tools" { } [
+        (entry "attribute" "current" { type = "string"; value = "pen"; } [ ])
+        (entry "data" "pen" { } [
+          (entry "attribute" "color" { type = "hex"; value = "ff808080"; } [ ])
+          (entry "attribute" "size" { type = "string"; value = "BIG"; } [ ])
+        ])
+      ])
+    ];
     filepath = xmlAttrset.createRoot root null;
     root = "settings";
     useNs = false;

@@ -20,7 +20,7 @@
   # Patched impermanence Nix expression.
   # - Adds `homeRelative` option to place files and directories directly in the home directory.
   impermanence = { pkgs, fetchFromGitHub, ... }: pkgs.srcOnly rec {
-    pname = "nur-rycee-patched";
+    pname = "impermanence-patched";
     version = "7b1d382faf603b6d264f58627330f9faa5cba149";
 
     stdenv = pkgs.stdenvNoCC;
