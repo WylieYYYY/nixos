@@ -60,6 +60,7 @@ in
   config = lib.mkIf cfg.enable {
     home.file."${dataPath}/${cubicle.addonId}/storage.js".text = builtins.toJSON ({
       version = [ 0 1 0 ];
+      preferences.should_revert_old_tab = false;
     } // (
       if cfg.preferences == null
       then { }

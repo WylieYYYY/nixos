@@ -45,7 +45,7 @@ buildNpmPackage (
   {
     inherit version;
     pname = package.name;
-    src = patchedSrc;
+    src = builtins.storePath patchedSrc;
     preConfigure = "mkdir --parent node_modules";
     buildPhase = "${lib.getExe' pkgs.pulsar "pulsar"} --package rebuild";
     dontNpmPrune = true;
@@ -55,7 +55,7 @@ buildNpmPackage (
     else {
       npmDeps = importNpmLock {
         inherit package;
-        packageLock =  lib.importJSON
+        packageLock = lib.importJSON
             (if packageLock == null
              then "${patchedSrc}/package-lock.json"
              else packageLock);
