@@ -16,11 +16,6 @@
     nix-direnv.enable = true;
   };
 
-  # Persists the direnv allow files for impermanence.
-  xdg.dataFile."direnv/allow" = lib.mkIf (config.customization.persistence.direnv != null) {
-    source = config.lib.file.mkOutOfStoreSymlink config.customization.persistence.direnv;
-  };
-
   programs.fish = {
     enable = true;
     interactiveShellInit = ''

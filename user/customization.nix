@@ -37,7 +37,6 @@ let
   in lib.types.submodule {
     options = ((builtins.mapAttrs (lib.const mkNullablePathOption) {
       browser = "Directory for persisting extensions.json, extension-settings.json.";
-      direnv = "Directory for persisting Direnv allow records.";
       kdbx = "Default Keepass file for password managers' quick access.";
       piptube = "PiPTube JAR file.";
       syncthing = "Directory to be shared to all devices provided.";
@@ -109,6 +108,11 @@ let
         default = [ ];
         description = "Ports to be blocked from other users.";
       };
+      stow = lib.mkOption {
+        type = with lib.types; attrsOf (listOf str);
+        default = { };
+        description = "Attribute set of Stow directories to package names within them.";
+      };
       syncthingIds = lib.mkOption {
         type = lib.types.attrsOf lib.types.str;
         default = { };
@@ -125,6 +129,20 @@ let
         description = ''
           Whether the browser persisting directory has a build of Cubicle to link.
           Enables the extension with the name `cubicle.xpi` under the persisting directory.
+        '';
+      };
+      vscodiumProfiles = let
+        vscodeModule = pkgs.callPackage "${home-manager-repo}/modules/programs/vscode.nix" { };
+      in lib.mkOption {
+        type = with lib.types; attrsOf (either (listOf str) vscodeModule.options.programs.vscode.profiles.type);
+        default = { };
+        apply = value: (
+          if builtins.isList value
+          then builtins.map (path: "file://" + builtins.toString path) value
+          else value
+        );
+        description = ''
+          Attribute set of profile names to lists of directories to use the preset profiles or full profile settings.
         '';
       };
       windowManager = lib.mkOption {

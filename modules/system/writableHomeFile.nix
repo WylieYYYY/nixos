@@ -40,7 +40,7 @@ in
     "${name}" = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       $DRY_RUN_CMD mkdir --parent $VERBOSE_ARG "$(dirname "$HOME"/${escapedName})"
       $DRY_RUN_CMD install --mode ${value.mode} --no-target-directory $VERBOSE_ARG \
-      ${file} "$HOME"/${escapedName}
+          ${file} "$HOME"/${escapedName}
     '';
   }) cfg);
 

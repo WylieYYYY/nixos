@@ -8,6 +8,7 @@
   home.homeDirectory = "/home/${username}";
 
   imports = [
+    ./../modules/applications/stow.nix
     ./../modules/system/homeDirectory.nix
     ./../modules/overlay.nix
     ./annoyance.nix
@@ -24,6 +25,14 @@
   '';
 
   home.packages = with pkgs; [ curl gocryptfs sshfs ];
+
+  programs.stow = {
+    enable = true;
+    dirs = builtins.mapAttrs (_: value: {
+      target = config.home.homeDirectory;
+      packages = value;
+    }) config.customization.stow;
+  };
 
   # Makes a convenient mount point for FUSE.
   home.directory."mnt" = { };
