@@ -10,7 +10,6 @@ let
     distro-grub-themes               = ./applications/pkgs/distro-grub-themes.nix;
     firefox-addons.cubicle           = ./applications/extensions/firefox-cubicle.nix;
     firefox-addons.seventv           = ./applications/extensions/firefox-7tv.nix;
-    gitlab-ci-local                  = ./applications/pkgs/gitlab-ci-local.nix;
     lua52Packages.awesome-ez         = ./applications/pkgs/awesome-ez.nix;
     noto-cjk-mono                    = ./applications/pkgs/noto-cjk-mono.nix;
     nur.repos.rycee                  = { pkgs, ... }: pkgs.callPackage "${pkgs.callPackage nur { }}" { };

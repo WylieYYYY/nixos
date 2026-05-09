@@ -37,6 +37,10 @@
   # Makes a convenient mount point for FUSE.
   home.directory."mnt" = { };
 
+  # Makes fonts available for Flatpak.
+  xdg.dataFile."fonts".source = config.lib.file.mkOutOfStoreSymlink
+      "/run/current-system/sw/share/X11/fonts";
+
   home.persistence = config.customization.persistence.other;
   services.udiskie.enable = true;
 

@@ -82,20 +82,15 @@ awful.rules.rules = {
 
     {
         rule_any = { class = wm_common.maximized_wm_classes },
-        properties = { maximized = true },
+        properties = {
+            maximized = function(c)
+                return c.type == "normal"
+            end,
+        },
     },
 
     {
         rule_any = { type = { "normal", "dialog" } },
         properties = { titlebars_enabled = true },
-    },
-
-    {
-        rule = { class = "io-gitlab-wylieyyyy-piptube-AppKt" },
-        properties = {
-            focusable = false,
-            tags = { "1", "2" },
-            placement = awful.placement.restore,
-        },
     },
 }

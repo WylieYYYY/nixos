@@ -175,6 +175,9 @@ in
       monospace = [ "Fira Code" ];
     };
     fontconfig.subpixel.rgba = "none";
+
+    # Makes fonts available for Flatpak.
+    fontDir.enable = true;
   };
 
   security.rtkit.enable = true;

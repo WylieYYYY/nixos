@@ -99,7 +99,7 @@
       };
 
       core.excludesFile = builtins.toString (pkgs.writeText "git-ignore"
-          (lib.concatStringsSep "\n" [ ".direnv" ".envrc" "shell.nix" ]));
+          (lib.concatStringsSep "\n" [ ".direnv" ".envrc" ".vscode" "shell.nix" ]));
       credential.helper = "cache";
     };
 

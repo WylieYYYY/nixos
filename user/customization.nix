@@ -83,6 +83,11 @@ let
           `useCubicleExtension` must be true for this to take effect.
         '';
       };
+      flatpak = lib.mkOption {
+        type = lib.types.attrsOf lib.types.str;
+        default = { };
+        description = "Attribute set of Flatpak package IDs to hash values.";
+      };
       git = lib.mkOption {
         type = gitConfigModule;
         default = { };

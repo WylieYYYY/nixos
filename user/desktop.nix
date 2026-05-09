@@ -3,6 +3,13 @@ args@{ config, lib, pkgs, ... }:
 # Adds desktop applications, with some MIME and keybind settings.
 
 let
+  nix-flatpak = (import <nixpkgs> { }).fetchFromGitHub {
+    owner = "gmodena";
+    repo = "nix-flatpak";
+    rev = "v0.7.0";
+    sha256 = "7ZCulYUD9RmJIDULTRkGLSW1faMpDlPKcbWJLYHoXcs=";
+  };
+
   xmlAttrset = pkgs.callPackage ./../modules/utils/xmlAttrset.nix { };
 
   # Browser by default focuses to the address bar on launch,
@@ -59,6 +66,15 @@ let
       (entry "Mousepad" (lib.getExe' xfce.mousepad "mousepad"))
       (entry "Password Manager" (lib.getExe' keepassxc "keepassxc"))
     ])
+    (entry "Flatpak" (lib.mapAttrsToList (id: let
+        idNamePortion = lib.last (lib.splitString "." id);
+        nameFirstChar = lib.toUpper (builtins.substring 0 1 idNamePortion);
+        nameRest = builtins.substring 1 (builtins.stringLength idNamePortion) idNamePortion;
+      in lib.const (entry
+        (nameFirstChar + nameRest)
+        "${lib.getExe flatpak} run --user ${lib.escapeShellArg id}"
+      )
+    ) config.customization.flatpak))
     (entry "Internet" ([
       (entry "LibreWolf" librewolf-unfocus)
       (entry "Liferea" (lib.getExe' liferea "liferea"))
@@ -158,6 +174,7 @@ in
       clockLeftClickCommand = calendar;
     };
   in [
+    "${nix-flatpak}/modules/home-manager.nix"
     ./../modules/applications/mimeApps.nix
     ./../modules/applications/nitrogen.nix
     ./../modules/applications/openbox.nix
@@ -195,6 +212,15 @@ in
   # Allows some unfree packages for isolation.
   nixpkgs.config.allowUnfreePredicate = pkg:
     builtins.elem (lib.getName pkg) (config.customization.global.allowedUnfreePackages);
+
+  # Installs Flatpak packages, commands extracted for application menu.
+  services.flatpak = {
+    enable = true;
+    packages = lib.mapAttrsToList (id: hash: {
+      flatpakref = "https://dl.flathub.org/repo/appstream/${id}.flatpakref";
+      sha256 = hash;
+    }) config.customization.flatpak;
+  };
 
   # Some nice icons for applications, files, and the like.
   home.file.".icons/default/index.theme".text = lib.generators.toINI { } {
