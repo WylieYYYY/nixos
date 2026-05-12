@@ -27,6 +27,11 @@ in
 {
   config.nixpkgs.overlays = [
     (final: prev: lib.updateManyAttrsByPath (updates prev) prev)
+    (final: prev: {
+      firefoxpwa = prev.firefoxpwa.override {
+        firefoxRuntime = prev.librewolf-unwrapped;
+      };
+    })
     (final: prev: let
       libadwaitaOverride = package: package.override {
         libadwaita = prev.libadwaita.overrideAttrs (old: {

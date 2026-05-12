@@ -113,6 +113,11 @@ let
         default = [ ];
         description = "Ports to be blocked from other users.";
       };
+      pwaProfiles = lib.mkOption {
+        type = lib.types.attrsOf lib.types.anything;
+        default = { };
+        description = "PWA profiles.";
+      };
       stow = lib.mkOption {
         type = with lib.types; attrsOf (listOf str);
         default = { };

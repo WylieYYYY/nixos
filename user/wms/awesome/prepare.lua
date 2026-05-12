@@ -35,6 +35,9 @@ do
 end
 
 beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
+beautiful.tasklist_bg_normal = beautiful.bg_minimize
+beautiful.tasklist_fg_normal = beautiful.fg_focus
+beautiful.tasklist_fg_minimize = beautiful.fg_focus
 
 local wm_common_file = io.open(gears.filesystem.get_configuration_dir() .. "wm-common.json", "r")
 local wm_common = json.decode(wm_common_file:read("*a"))

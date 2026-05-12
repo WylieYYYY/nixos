@@ -66,6 +66,7 @@ let
       (entry "Mousepad" (lib.getExe' xfce.mousepad "mousepad"))
       (entry "Password Manager" (lib.getExe' keepassxc "keepassxc"))
     ])
+  ] ++ lib.optionals (config.customization.flatpak != { }) [
     (entry "Flatpak" (lib.mapAttrsToList (id: let
         idNamePortion = lib.last (lib.splitString "." id);
         nameFirstChar = lib.toUpper (builtins.substring 0 1 idNamePortion);
@@ -75,6 +76,7 @@ let
         "${lib.getExe flatpak} run --user ${lib.escapeShellArg id}"
       )
     ) config.customization.flatpak))
+  ] ++ [
     (entry "Internet" ([
       (entry "LibreWolf" librewolf-unfocus)
       (entry "Liferea" (lib.getExe' liferea "liferea"))
@@ -89,6 +91,11 @@ let
       (entry "TreeSheets" treesheets)
       (entry "VLC" (lib.getExe' vlc "vlc"))
     ])
+  ] ++ lib.optionals (config.customization.pwaProfiles != { })  [
+    (entry "Web App" (lib.foldlAttrs (acc: name: profile:
+      acc ++ [(entry profile.site.name "${lib.getExe firefoxpwa} site launch ${name}")]
+    ) [ ] config.customization.pwaProfiles))
+  ] ++ [
     (entry "Work" ([
       (entry "Gummi" (lib.getExe' gummi "gummi"))
       (entry "LibreOffice" (lib.getExe' libreoffice-still "libreoffice"))
@@ -157,7 +164,7 @@ let
     "Pcmanfm"
     "Pulsar"
     "VSCodium"
-  ];
+  ] ++ (builtins.map (name: "FFPWA-${name}") (builtins.attrNames config.customization.pwaProfiles));
 in
 
 {
@@ -178,6 +185,7 @@ in
     ./../modules/applications/mimeApps.nix
     ./../modules/applications/nitrogen.nix
     ./../modules/applications/openbox.nix
+    ./../modules/applications/pwa.nix
     ./../modules/system/writableHomeFile.nix
     ./browser.nix
     ./conky.nix
@@ -220,6 +228,12 @@ in
       flatpakref = "https://dl.flathub.org/repo/appstream/${id}.flatpakref";
       sha256 = hash;
     }) config.customization.flatpak;
+  };
+
+  # Installs web applications with overlay.
+  programs.pwa = {
+    enable = config.customization.pwaProfiles != { };
+    profiles = config.customization.pwaProfiles;
   };
 
   # Some nice icons for applications, files, and the like.
