@@ -4,7 +4,7 @@
   # - Adds profile folders configuation in VSCodium.
   home-manager = { pkgs, fetchFromGitHub, ... }: pkgs.srcOnly rec {
     pname = "home-manager-patched";
-    version = "82fb7dedaad83e5e279127a38ef410bcfac6d77c";
+    version = "b179bde238977f7d4454fc770b1a727eaf55111c";
 
     stdenv = pkgs.stdenvNoCC;
 
@@ -12,7 +12,7 @@
       owner = "nix-community";
       repo = "home-manager";
       rev = version;
-      sha256 = "MOU5YdVu4DVwuT5ztXgQpPuRRBjSjUGIdUzOQr9iQOY=";
+      sha256 = "RUkMrREjKDQrA+dA9+xZviGAxM5W1aVdyOr/bSYpHrE=";
     };
 
     patches = [ ./../../patches/home-manager-vscode-profile-folders.patch ];

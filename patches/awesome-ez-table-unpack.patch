@@ -1,0 +1,13 @@
+diff --git a/init.lua b/init.lua
+index 593930f..1405248 100644
+--- a/init.lua
++++ b/init.lua
+@@ -48,7 +48,7 @@ function ez.util.cb_from_table(cb)
+         local tbl = gtable.clone(cb, false)
+         local func = table.remove(tbl, 1)
+         cb = function()
+-            return func(unpack(tbl))
++            return func(table.unpack(tbl))
+         end
+     end
+     return cb

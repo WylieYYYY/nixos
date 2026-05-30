@@ -11,6 +11,8 @@ pkgs.lua5_2.pkgs.buildLuarocksPackage rec {
     sha256 = "Ku0/P8/og5e77671QYiPkjz5pYNLcSyrBeMYHnyp49s=";
   }).outPath;
 
+  patches = [ ./../../../patches/awesome-ez-table-unpack.patch ];
+
   src = fetchFromGitHub {
     owner = "jcrd";
     repo = "awesome-ez";

@@ -28,7 +28,7 @@ in
   config.nixpkgs.overlays = [
     (final: prev: lib.updateManyAttrsByPath (updates prev) prev)
     (final: prev: {
-      firefoxpwa = prev.firefoxpwa.override {
+      firefoxpwa-unwrapped = prev.firefoxpwa-unwrapped.override {
         firefoxRuntime = prev.librewolf-unwrapped;
       };
     })
@@ -37,8 +37,8 @@ in
         libadwaita = prev.libadwaita.overrideAttrs (old: {
           doCheck = false;
           patches = (old.patches or [ ]) ++ [(prev.fetchpatch {
-            url = "https://aur.archlinux.org/cgit/aur.git/plain/theming_patch.diff?h=libadwaita-without-adwaita-git&id=9dca7c63f917a1daafc900c4c4cf114f97553ae6";
-            sha256 = "8PL8r+w+pakj+HJBC2ylAfwnb5z/Hwg7gHxQjtw7r6k=";
+            url = "https://aur.archlinux.org/cgit/aur.git/plain/theming_patch.diff?h=libadwaita-without-adwaita&id=4a304803a89cdefab0d7523ac0155eaf5f9ec962";
+            sha256 = "xE6ZYeNIKiq+vXlF0ByrAg/JEQ3wbzab4XkjVRtPFVA=";
           })];
         });
       };

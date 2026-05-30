@@ -15,9 +15,9 @@ awful.layout.layouts = {
 }
 
 if next(wm_common.wallpapers) ~= null then
-    awful.screen.connect_for_each_screen(function(s)
-        local wallpaper = wm_common.wallpapers[s.index % #wm_common.wallpapers + 1]
-        gears.wallpaper.maximized(wallpaper, s)
+    awful.screen.connect_for_each_screen(function(screen)
+        local wallpaper = wm_common.wallpapers[screen.index % #wm_common.wallpapers + 1]
+        gears.wallpaper.maximized(wallpaper, screen)
     end)
 end
 

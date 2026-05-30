@@ -15,8 +15,8 @@ stdenv.mkDerivation rec {
       alsa-lib
       ffmpeg
       libGL
-      xorg.libXtst
-      xorg.libXxf86vm
+      libxtst
+      libxxf86vm
 
       vlc
     ];

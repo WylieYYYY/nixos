@@ -31,11 +31,16 @@ return function(main_menu, clock_lclick_command)
         awful.tag({ "1", "2" }, s, awful.layout.layouts[1])
 
         local tasklist_layout = wibox.layout.flex.horizontal()
-        tasklist_layout.max_widget_size = 300
+        tasklist_layout.max_widget_size = 200
 
         s.tasklist = awful.widget.tasklist({
             screen = s,
-            filter = awful.widget.tasklist.filter.currenttags,
+            filter = function(c, screen)
+                if c.type ~= "normal" then
+                    return false
+                end
+                return awful.widget.tasklist.filter.currenttags(c, screen)
+            end,
             buttons = tasklist_buttons,
             layout = tasklist_layout,
             update_function = function(w, buttons, label, data, clients, ...)

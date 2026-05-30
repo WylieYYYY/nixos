@@ -23,10 +23,12 @@
   networking.nameservers = config.customization.global.network.dns;
   services.resolved = lib.mkIf (config.customization.global.network.dns != [ ]) {
     enable = true;
-    dnsovertls = "true";
-    dnssec = "true";
-    domains = [ "~." ];
-    fallbackDns = config.customization.global.network.dns;
+    settings.Resolve = {
+      DNSOverTLS = true;
+      DNSSEC = true;
+      Domains = [ "~." ];
+      FallbackDNS = config.customization.global.network.dns;
+    };
   };
 
   # Excludes domains that are not compatible with DNSSEC.

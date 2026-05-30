@@ -1,9 +1,9 @@
-diff --git a/modules/programs/vscode/default.nix b/modules/programs/vscode/default.nix
-index 863a1e415..874db9460 100644
---- a/modules/programs/vscode/default.nix
-+++ b/modules/programs/vscode/default.nix
-@@ -154,6 +154,12 @@ let
- 
+diff --git a/modules/programs/vscode/mkVscodeModule.nix b/modules/programs/vscode/mkVscodeModule.nix
+index 51f617594..1255a589e 100644
+--- a/modules/programs/vscode/mkVscodeModule.nix
++++ b/modules/programs/vscode/mkVscodeModule.nix
+@@ -99,6 +99,12 @@ let
+
    profileType = types.submodule {
      options = {
 +      folders = mkOption {
@@ -15,23 +15,23 @@ index 863a1e415..874db9460 100644
        userSettings = mkOption {
          type = types.either types.path jsonFormat.type;
          default = { };
-@@ -497,6 +503,9 @@ in
-     # and overwritten on closing VSCode.
-     home.activation.vscodeProfiles = lib.hm.dag.entryAfter [ "writeBoundary" ] (
-       let
-+        profileFoldersJSON = builtins.toJSON (lib.foldlAttrs (acc: name: value:
-+          acc // (lib.genAttrs value.folders (lib.const name))
-+        ) { } allProfilesExceptDefault);
-         modifyGlobalStorage = pkgs.writeShellScript "vscode-global-storage-modify" ''
-           PATH=${lib.makeBinPath [ pkgs.jq ]}''${PATH:+:}$PATH
-           file="${userDir}/globalStorage/storage.json"
-@@ -522,7 +531,8 @@ in
- 
-           if [ "$file_write" != "" ]; then
-             userDataProfiles=$(jq ".userDataProfiles += $(echo $file_write | jq -R 'split("...") | map({ name: ., location: . })')" "$file")
--            echo $userDataProfiles > "$file"
-+            withAddedFolders=$(echo $userDataProfiles | jq --argjson profile_folders ${lib.escapeShellArg profileFoldersJSON} '.profileAssociations.workspaces += $profile_folders')
-+            echo $withAddedFolders > "$file"
-           fi
-         '';
-       in
+@@ -351,6 +357,9 @@ in
+     home.activation = {
+       "${lib.last modulePath}Profiles" = lib.hm.dag.entryAfter [ "writeBoundary" ] (
+         let
++          profileFoldersJSON = builtins.toJSON (lib.foldlAttrs (acc: name: value:
++            acc // (lib.genAttrs value.folders (lib.const name))
++          ) { } allProfilesExceptDefault);
+           modifyGlobalStorage = pkgs.writeShellScript "${lib.last modulePath}-global-storage-modify" ''
+             PATH=${lib.makeBinPath [ pkgs.jq ]}''${PATH:+:}$PATH
+             file="${userDir}/globalStorage/storage.json"
+@@ -376,7 +385,8 @@ in
+
+             if [ "$file_write" != "" ]; then
+               userDataProfiles=$(jq ".userDataProfiles += $(echo $file_write | jq -R 'split("...") | map({ name: ., location: . })')" "$file")
+-              echo $userDataProfiles > "$file"
++              withAddedFolders=$(echo $userDataProfiles | jq --argjson profile_folders ${lib.escapeShellArg profileFoldersJSON} '.profileAssociations.workspaces += $profile_folders')
++              echo $withAddedFolders > "$file"
+             fi
+           '';
+         in

@@ -30,14 +30,24 @@ in
   # Disables the tip of the day popup.
   xdg.configFile."libreoffice/4/user/registrymodifications.xcu" = {
     source = xmlAttrset.createOrdered rec {
-      list = [(lib.nameValuePair "item" {
-        "@oor:path" = "/org.openoffice.Office.Common/Misc";
-        prop = {
-          "@oor:name" = "ShowTipOfTheDay";
-          "@oor:op" = "fuse";
-          value."text()" = "false";
-        };
-      })];
+      list = [
+        (lib.nameValuePair "item" {
+          "@oor:path" = "/org.openoffice.Office.Common/Misc";
+          prop = {
+            "@oor:name" = "FirstRun";
+            "@oor:op" = "fuse";
+            value."text()" = "false";
+          };
+        })
+        (lib.nameValuePair "item" {
+          "@oor:path" = "/org.openoffice.Office.Common/Misc";
+          prop = {
+            "@oor:name" = "ShowTipOfTheDay";
+            "@oor:op" = "fuse";
+            value."text()" = "false";
+          };
+        })
+      ];
       filepath = xmlAttrset.createRoot root {
         oor = "http://openoffice.org/2001/registry";
         xs = "http://www.w3.org/2001/XMLSchema";

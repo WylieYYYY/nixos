@@ -63,7 +63,7 @@ let
     "Applications"
     (entry "Accessories" [
       (entry "Archive Manager" file-roller)
-      (entry "Mousepad" (lib.getExe' xfce.mousepad "mousepad"))
+      (entry "Mousepad" (lib.getExe' mousepad "mousepad"))
       (entry "Password Manager" (lib.getExe' keepassxc "keepassxc"))
     ])
   ] ++ lib.optionals (config.customization.flatpak != { }) [
@@ -104,7 +104,7 @@ let
     ]))
     (entry "File Manager" pcmanfm)
     "System"
-    (entry "Terminal" (lib.getExe' xfce.xfce4-terminal "xfce4-terminal"))
+    (entry "Terminal" (lib.getExe' xfce4-terminal "xfce4-terminal"))
     (entry "Reconfigure" { action."@name" = "Reconfigure"; })
     ""
     (entry "Log Out" { action."@name" = "Exit"; })
@@ -146,7 +146,7 @@ let
     "W-f" = "${lib.getExe librewolf-unfocus}";
     "W-l" = "${lib.getExe' lightlocker "light-locker-command"} --lock";
     "W-p" = "${lib.getExe autorandr} --change";
-    "W-t" = "${lib.getExe' xfce.xfce4-terminal "xfce4-terminal"}";
+    "W-t" = "${lib.getExe' xfce4-terminal "xfce4-terminal"}";
     "W-S-f" = "${lib.getExe config.programs.librewolf.finalPackage} --private-window";
     "XF86AudioMute" = "${lib.getExe pamixer} --toggle-mute";
     "XF86AudioLowerVolume" = "${lib.getExe pamixer} --decrease 2";
@@ -283,7 +283,7 @@ in
     { path = [ "config" "use_trash" ]; update = old: 0; }
     {
       path = [ "config" "terminal" ];
-      update = old: "${lib.getExe' pkgs.xfce.xfce4-terminal "xfce4-terminal"}";
+      update = old: "${lib.getExe' pkgs.xfce4-terminal "xfce4-terminal"}";
     }
   ] (builtins.fromTOML (builtins.readFile "${pkgs.libfm}/etc/xdg/libfm/libfm.conf")));
 
@@ -346,6 +346,8 @@ in
       "file:/// Root"
       "file:///mnt Mountpoint"
     ];
+
+    gtk4.theme = config.gtk.theme;
   };
 
   # Defines associations so that no "Open With..." prompt is neccessary.
@@ -376,12 +378,12 @@ in
       "application/zip" = file-roller;
       "image/jpeg" = nomacs;
       "image/png" = nomacs;
-      "text/plain" = pair "org.xfce.mousepad" xfce.mousepad;
+      "text/plain" = pair "org.xfce.mousepad" mousepad;
       "video/mp4" = pair "vlc-focus" vlcDesktopItem;
       "video/webm" = pair "vlc-focus" vlcDesktopItem;
 
       "application/vnd.sqlite3" = sqlitebrowser;
-      "application/xml" = pair "org.xfce.mousepad" xfce.mousepad;
+      "application/xml" = pair "org.xfce.mousepad" mousepad;
       "text/x-tex" = gummi;
     } // editorEntry;
   };
