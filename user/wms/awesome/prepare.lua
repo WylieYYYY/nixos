@@ -6,8 +6,10 @@ local naughty = require("naughty")
 
 local json = require("cjson")
 
+awful.mouse.snap.client_enabled = false
 awful.mouse.snap.edge_enabled = false
 awful.mouse.snap = require("snap")
+awful.mouse.snap.default_distance = 16
 
 if awesome.startup_errors then
     naughty.notify({

@@ -27,16 +27,16 @@ in
   };
 
   # Although LibreOffice replaces read-only file, it respects existing configurations.
-  # Disables the tip of the day popup.
+  # Disables the setup and tip of the day popup.
   xdg.configFile."libreoffice/4/user/registrymodifications.xcu" = {
     source = xmlAttrset.createOrdered rec {
       list = [
         (lib.nameValuePair "item" {
-          "@oor:path" = "/org.openoffice.Office.Common/Misc";
+          "@oor:path" = "/org.openoffice.Setup/Product";
           prop = {
-            "@oor:name" = "FirstRun";
+            "@oor:name" = "ooSetupLastVersion";
             "@oor:op" = "fuse";
-            value."text()" = "false";
+            value."text()" = lib.versions.majorMinor pkgs.libreoffice-still.version;
           };
         })
         (lib.nameValuePair "item" {

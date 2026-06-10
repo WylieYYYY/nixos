@@ -11,10 +11,11 @@ let
     userSettings = {
       "diffEditor.ignoreTrimWhitespace" = false;
       "editor.bracketPairColorization.enabled" = false;
+      "editor.fontLigatures" = true;
       "editor.formatOnSave" = true;
+      "editor.stickyScroll.enabled" = false;
+      "editor.suggest.showSnippets" = false;
       "files.enableTrash" = false;
-      "files.insertFinalNewline" = true;
-      "files.trimTrailingWhitespace" = true;
       "git.terminalAuthentication" = false;
       "javascript.validate.enable" = false;
       "js/ts.implicitProjectConfig.checkJs" = true;
@@ -34,9 +35,8 @@ in
 
 {
 
-  programs.vscode = lib.mkIf (config.customization.codeEditor == "vscodium") {
+  programs.vscodium = lib.mkIf (config.customization.codeEditor == "vscodium") {
     enable = true;
-    package = pkgs.vscodium;
 
     profiles = builtins.mapAttrs (_: value:
       value // profileCommonConfig // {
@@ -50,8 +50,7 @@ in
       default = {
         enableUpdateCheck = false;
         enableExtensionUpdateCheck = false;
-
-        extensions = pkgs.callPackage ./../../modules/applications/extensions/vscode-extras.nix { };
+        extensions = [ ];
       };
     } // lib.optionalAttrs (config.customization.vscodiumProfiles ? c) {
       c = {

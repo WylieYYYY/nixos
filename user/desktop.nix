@@ -101,6 +101,7 @@ let
       (entry "LibreOffice" (lib.getExe' libreoffice-still "libreoffice"))
     ] ++ editorEntry ++ [
       (entry "Xournal++" (lib.getExe' xournalpp "xournalpp"))
+      (entry "Zeal" (lib.getExe zeal))
     ]))
     (entry "File Manager" pcmanfm)
     "System"
@@ -330,6 +331,10 @@ in
   # Sets various GTK themes and shortcuts in file manager.
   gtk = {
     enable = true;
+    font = {
+      package = pkgs.noto-fonts;
+      name = "Noto Sans";
+    };
     iconTheme = {
       package = pkgs.papirus-icon-theme;
       name = "Papirus-Dark";

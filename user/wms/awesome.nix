@@ -62,7 +62,7 @@ in
         (pkgs.stdenv.mkDerivation {
           name = "awesome-snap";
           src = "${pkgs.awesome}/share/awesome/lib/awful/mouse";
-          patches = [ ./../../patches/awesome-snap-maximize-both-axis.patch ];
+          patches = [ ./../../patches/awesome-snap.patch ];
           buildPhase = "install --mode 444 -D --target-directory $out snap.lua";
         })
       ];

@@ -1,16 +1,7 @@
 diff --git a/snap.lua b/snap.lua
-index b1a115e0..00f69cb3 100644
+index b1a115e0..e458c4c7 100644
 --- a/snap.lua
 +++ b/snap.lua
-@@ -24,7 +24,7 @@ local capi = {
- }
-
- local module = {
--    default_distance = 8
-+    default_distance = 16
- }
-
- local placeholder_w = nil
 @@ -72,6 +72,9 @@ local function show_placeholder(geo)
  end
 
@@ -57,12 +48,26 @@ index b1a115e0..00f69cb3 100644
      return build_placement(current_snap, current_axis)(c,{
          to_percent     = 0.5,
          honor_workarea = true,
-@@ -253,7 +262,7 @@ resize.add_move_callback(function(c, geo, args)
+@@ -250,10 +259,12 @@ end
+
+ -- Enable edge snapping
+ resize.add_move_callback(function(c, geo, args)
++    if c.type ~= "normal" then return end
++
      -- Screen edge snapping (areosnap)
      if (module.edge_enabled ~= false)
        and args and (args.snap == nil or args.snap) then
 -        detect_areasnap(c, 16)
-+        detect_areasnap(c, 32)
++        detect_areasnap(c, module.default_distance * 2)
      end
 
      -- Snapping between clients
+@@ -265,7 +276,7 @@ end, "mouse.move")
+
+ -- Apply the aerosnap
+ resize.add_leave_callback(function(c, _, args)
+-    if module.edge_enabled == false then return end
++    if module.edge_enabled == false or c.type ~= "normal" then return end
+     return apply_areasnap(c, args)
+ end, "mouse.move")
+
