@@ -172,6 +172,7 @@ in
   in ''
     bind m mouse_mode
     bind s hint -;
+    bind gi focusinput -b
     colors dark
 
     autocmd DocLoad ^https?://(?!(?:${mouseAllowedRegex})(?:[:/]|$)) no_mouse_mode

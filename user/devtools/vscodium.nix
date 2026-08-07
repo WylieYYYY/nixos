@@ -13,6 +13,7 @@ let
       "editor.bracketPairColorization.enabled" = false;
       "editor.fontLigatures" = true;
       "editor.formatOnSave" = true;
+      "editor.rulers" = [ 80 100 ];
       "editor.stickyScroll.enabled" = false;
       "editor.suggest.showSnippets" = false;
       "files.enableTrash" = false;
@@ -20,12 +21,14 @@ let
       "javascript.validate.enable" = false;
       "js/ts.implicitProjectConfig.checkJs" = true;
       "nixEnvSelector.nixFile" = "\${workspaceRoot}/shell.nix";
+      "redhat.telemetry.enabled" = false;
       "security.workspace.trust.enabled" = false;
       "terminal.integrated.defaultLocation" = "editor";
       "terminal.integrated.sendKeybindingsToShell" = true;
       "typescript.validate.enable" = false;
       "window.customTitleBarVisibility" = "never";
       "window.titleBarStyle" = "native";
+      "workbench.activityBar.location" = "top";
       "workbench.colorTheme" = "Monokai";
       "workbench.secondarySideBar.defaultVisibility" = "hidden";
       "workbench.welcome.enabled" = false;
@@ -57,6 +60,14 @@ in
         folders = config.customization.vscodiumProfiles.c;
         extensions = with pkgs.vscode-extensions; [
           llvm-vs-code-extensions.vscode-clangd
+        ];
+      };
+    } // lib.optionalAttrs (config.customization.vscodiumProfiles ? java) {
+      java = {
+        folders = config.customization.vscodiumProfiles.java;
+        extensions = with pkgs.vscode-extensions; [
+          vscjava.vscode-java-pack
+          redhat.java
         ];
       };
     } // lib.optionalAttrs (config.customization.vscodiumProfiles ? nix) {

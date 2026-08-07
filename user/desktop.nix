@@ -381,11 +381,14 @@ in
       "application/x-krita" = krita;
       "application/x-tar" = file-roller;
       "application/zip" = file-roller;
-      "image/jpeg" = nomacs;
-      "image/png" = nomacs;
+      "image/jpeg" = pair "org.nomacs.ImageLounge" nomacs;
+      "image/png" = pair "org.nomacs.ImageLounge" nomacs;
       "text/plain" = pair "org.xfce.mousepad" mousepad;
       "video/mp4" = pair "vlc-focus" vlcDesktopItem;
       "video/webm" = pair "vlc-focus" vlcDesktopItem;
+
+      "x-scheme-handler/http" = config.programs.librewolf.finalPackage;
+      "x-scheme-handler/https" = config.programs.librewolf.finalPackage;
 
       "application/vnd.sqlite3" = sqlitebrowser;
       "application/xml" = pair "org.xfce.mousepad" mousepad;
